@@ -1,0 +1,2042 @@
+\documentclass{book}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage[main=english]{babel}
+\usepackage{mathtools}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{mathdots}
+\usepackage{mathtools}
+\usepackage{enumitem}
+\usepackage{tikz}
+
+\usetikzlibrary{cd}
+
+\usepackage[legalpaper, portrait, margin=1.09in]{geometry}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{corollaryp}{Corollary}[proposition]
+\newtheorem{lemma}[theorem]{Lemma}
+
+\newtheorem{definition}{Definition}[section]
+
+\newtheorem{example}{Example}[section]
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}[section]
+
+\newcommand{\V}{\mathcal{V}}
+\newcommand{\A}{\mathbb{A}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\T}{\mathbb{T}}
+\newcommand{\h}{\mathbb{H}}
+
+% Makes \*v become \mathbf{v} for any value of v
+\def\*#1{\mathbf{#1}}
+
+\newcommand{\abs}[1]{\left\lvert#1\right\rvert}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\DeclareMathOperator{\proj}{proj}
+\DeclareMathOperator{\cis}{cis}
+\let\Arg\relax
+\DeclareMathOperator{\Arg}{Arg}
+\DeclareMathOperator{\col}{col}
+\DeclareMathOperator{\row}{row}
+\DeclareMathOperator{\nul}{null}
+\DeclareMathOperator{\spn}{span}
+\DeclareMathOperator{\Mat}{Mat}
+\DeclareMathOperator{\lcm}{lcm}
+\let\hom\relax
+\DeclareMathOperator{\hom}{Hom}
+\DeclareMathOperator{\End}{End}
+\DeclareMathOperator{\ad}{ad}
+\DeclareMathOperator{\Id}{Id}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\ev}{ev}
+\newcommand{\mf}[1]{\mathfrak{#1}}
+
+\title{Topology}
+\author{David Farrell}
+
+\DeclareMathOperator{\id}{Id}
+\DeclareMathOperator{\sgn}{sgn}
+
+\newcommand{\initial}[2]{\Omega(#1, #2)}
+\newcommand{\final}[2]{\Omega(#2, #1)}
+
+\newcommand{\neigh}[1]{\mathcal N(#1)}
+\newcommand{\filt}[1]{\mathcal F(#1)}
+
+\begin{document}
+\maketitle
+
+\frontmatter
+\chapter{Foreword}
+The following is a set of notes originally based on the notes currently available for the course Maths 750 offered at the University of Auckland. Familiarity with the concepts of courses Maths 255 and Maths 333 is assumed. Category theoretic terminology can be safely ignored by the unfamiliar reader.
+\mainmatter
+
+\tableofcontents
+
+\chapter{Basic Notions}
+\section{Introduction}
+Topology arises from the study of continuity. Continuity captures the notion of a function ``preserving the connectivity of its domain''; a continuous function $f$ can have in its image no ``gaps'' which didn't exist in the domain of the function. Continuity is defined for real functions on subsets of the real line by the familiar $\varepsilon$-$\delta$ definition. This definition can be extended to the next most obvious setting - any set where there is a sensible notion of distance between points, namely, a metric space.\par
+One defines continuity in metric spaces by taking the usual $\varepsilon$-$\delta$ definition and replacing every instance of the distance $|x-y|$ between real numbers with the appropriate distance function. The resulting theory of continuous functions is strong, rich and general. However, on a metric space $(X,d)$, the notion of continuity arising from the metric $d$ is not unique to $d$. In fact, if $f:(X,d)\to (Y,\rho)$ is a function, $f$ is continuous with respect to the metric $d$ \textit{if and only if} it is continuous with respect to the metric $(x,y)\mapsto 1/(1+d(x,y)^2)$, or in fact any choice of any of infinitely many other variations on $d$ (see Theorem \ref{metricsbewild}.)\par
+To understand this behaviour, we look to a seemingly innocuous observation. Each metric induces a notion of \textit{openness} for sets. In particular, any subset $U\subset X$ is said to be \textit{open} if it contains a \textit{neighbourhood} of each of its points, i.e., for every $x\in U$, every point within some distance $\varepsilon>0$ of $x$ is an element of $U$. One observes that a function $f$ of metric spaces is continuous \textit{if and only if the inverse image of each open set in the codomain is an open set in the domain}.\par
+Now two metrics may indeed induce the same notion of openness - and hence by the previous result, the same notion of continuity! So continuity seems not to depend on actual \textit{distances}, but a weaker structure -- a so-called \textit{topology}; a notion of \textit{openness}. This leads to the idea of axiomatising the behavior of open sets.
+
+\begin{remark}
+The preceding motivation is not an accurate account of the history and origins of topology.
+\end{remark}
+
+\section{Topologies and Topological Spaces}
+\begin{definition}
+Let $X$ be a set. A \textit{topology} on $X$ is a set $T\subset\mathcal P(X)$ satisfying the following:
+\begin{enumerate}
+    \item $\varnothing,X\in T$,
+    \item $\bigcup_{\alpha\in A} U_\alpha\in T$ for all families $\{U_\alpha\}_{\alpha\in A}$ in $T$, and
+    \item $\bigcap_{\alpha\in A} U_\alpha\in T$ for all finite families $\{U_\alpha\}_{\alpha\in A}$ in $T$.
+\end{enumerate}
+\end{definition}
+
+\begin{definition}
+A set $X$ equipped with a topology $T$ on $X$ is called a \textit{topological space}. Sets $U\in T$ are called \textit{open sets}. We often write that $(X,T)$ is a topological space, or simply that $X$ is, if the topology is understood from context. We say that a set $U$ is \textit{open in $X$} or simply that $U$ is \textit{open} is $U\in T$.
+\end{definition}
+
+\begin{remark}
+If $(X,T)$ is a topological space, the poset $(T,\subset)$ forms a bounded lattice under union and intersection, which is closed under arbitrary join and finite meet.
+\end{remark}
+
+\begin{example}
+Some examples of well known topological spaces.
+\begin{enumerate}
+    \item $\R^n$ with its usual set of open sets. This is called the ``usual topology on $\R^n$'' and $\R^n$ will be endowed with the usual topology unless stated otherwise.
+    \item $\C$ with its usual set of open sets,
+    \item Any metric space, with its usual set of open sets.
+\end{enumerate}
+\end{example}
+
+\begin{example}
+The following examples are handy for examples and counter-examples.
+\begin{enumerate}
+    \item Any nonempty set $X$ equipped with the topology $\mathcal P(X)$. Such a space is said to be a \textit{discrete} space, and $\mathcal P(X)$ is called the \textit{discrete topology on $X$}.
+    \item Any nonempty set $X$ equipped with the topology $\{\varnothing, X\}$. Such a space is called an \textit{indiscrete space} and $\{\varnothing, X\}$ is called the \textit{indiscrete topology on $X$}.
+    \item Any nonempty set $X$ equipped with the topology $\{U\subset X:U=\varnothing\text{ or }X\setminus U\text{ is finite}\}$. This topology is called the \textit{co-finite topology on $X$}. If $X$ is finite, the co-finite topology is the discrete topology.
+    \item Any nonempty set $X$ equipped with the topology $\{U\subset X:U=\varnothing\text{ or }X\setminus U\text{ is countable}\}$. This topology is called the \textit{co-countable topology on $X$}. If $X$ is countable, the co-countable topology is the discrete topology.
+\end{enumerate}
+\end{example}
+
+\begin{lemma}
+\label{openchar}
+Let $(X,T)$ be a topological space, and let $U\subset X$. Then $U$ is open (i.e., $U\in T$) if and only if, for each $x\in U$, there exists an open set $V\in T$ with $x\in V\subset U$.
+\end{lemma}
+\begin{proof}
+The forward direction is trivial (take $V=U$). For the converse, for each $x\in U$, let $V_x$ be an open set with $x\in V_x\subset U$. Then
+$$U=\bigcup_{x\in U} V_x$$
+hence $U$ is a union of open sets, thus $U$ is open.
+\end{proof}
+
+\begin{definition}
+Let $X$ be a set and let $T$ and $S$ be topologies on $X$. The topology $T$ is said to be \textit{finer} than $S$, and $S$ \textit{coarser} than $T$, if $S\subset T$.
+\end{definition}
+
+\section{Generation of Topologies}
+
+The following is clear, as the property of \textit{being a topology} is a \textit{closure condition}, i.e., a property of the form, whenever $X$ contains blah, then $X$ contains blah blah. The intersection of a family of things which all have a closure property will have the property itself.
+\begin{lemma}
+Let $X$ be a set and let $\{T_\alpha\}_{\alpha\in A}$ be a family of topologies on $X$. Then
+$$T:=\bigcap_{\alpha\in A} T_\alpha$$
+is a topology on $X$.
+\end{lemma}
+
+This allows the following definition.
+\begin{definition}
+Let $X$ be a set, let $S\subset\mathcal P(X)$ and let $\{T_\alpha\}_{\alpha\in A}$ be the family of all topologies $T_\alpha$ such that $S\subset T_\alpha$. Then the \textit{topology generated by $S$} is the topology
+$$\langle S\rangle :=\bigcap_{\alpha\in A} T_\alpha$$
+i.e., the smallest topology containing $S$.
+\end{definition}
+
+\begin{definition}
+Let $(X,T)$ be a topological space and let $B\subset T$. Then $B$ is said to be a \textit{subbasis for $T$} if $\langle B\rangle=T$.
+\end{definition}
+
+Note that $\langle B\rangle\subset T$ whenever $B\subset T$, so $B$ is a subbasis if it contains \textit{enough} open sets to generate $T$. Now, every set $B\subset\mathcal P(X)$ generates a topology, but a special class of generating sets, called \textit{bases}, generate topologies in a nicer way.
+
+\begin{definition}
+Let $(X,T)$ be a topological space and $B\subset T$. $B$ is said to be a \textit{basis for $T$} if
+$$T=\bigg\{\bigcup_{U\in C} U : C\subset B\bigg\}$$
+\end{definition}
+\begin{remark}
+If $B$ is a basis for a topology $T$, then since $T$ is a topology containing $B$ and any topology containing $B$ must contain all unions of families in $B$, it follows that $T=\langle B\rangle$. In particular, \textit{a basis is a subbasis}. Also, note that a basis $B$ need not include the empty set, since $\varnothing=\bigcup\varnothing$ and $\varnothing\subset B$.
+\end{remark}
+
+\begin{example} Some examples of bases.
+\begin{enumerate}
+    \item The set of open intervals $(a,b)\subset\R$ for $a<b$ forms a basis for the usual topology on $\R$, and the set of $n$-fold products $(a_1,b_1)\times\hdots\times(a_n,b_n)$ with $a_i<b_i$ for $1\leq i\leq n$ forms a basis for the usual topology on $\R^n$.
+    \item \label{sorgenfreyline} The set of intervals $[a,b)$ for $a\leq b$ forms a basis for a topology on $\R$ called the \textit{right half-open topology} or \textit{lower limit topology}, which is strictly finer than the usual topology. This space is called the \textit{Sorgenfrey line} and is denoted by $\R_l$.
+\end{enumerate}
+\end{example}
+
+\begin{proposition}[Characterisation of bases]
+\label{basechar}
+Let $X$ be a set and let $B\subset \mathcal P(X)$. Then $B$ is a basis for $\langle B\rangle$ if and only if
+\begin{enumerate}
+    \item $X=\bigcup_{U\in B} U$, and
+    \item For each $U,V\in B$ and $x\in U\cap V$, there exists $W\in B$ such that $x\in W\subset U\cap V$
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+$(\Rightarrow)$ Suppose $B$ is a basis for $\langle B\rangle$. (1) is clear and since $U\cap V$ is open, it is a union of sets in $B$, (2) follows. $(\Leftarrow)$ Suppose (1) and (2) hold. We wish to show that any set $\{\bigcup C:C\subset B\}$ is a topology. Clearly, it contains $\varnothing$ and $X$ and is closed under unions. To see that is is closed under finite intersection, it suffices, by induction, to verify that it is closed under the intersection of two sets. Let $C,D\subset B$, set $U=\bigcup C$ and $V=\bigcup D$, and let $x\in U\cap V$. There exists $W\in C$ and $Y\in D$ such that $x\in W$ and $x\in D$. Now by condition (2) one has a set $B\ni Z\subset W\cap Y$ containing $x$. Since $x$ was arbitrary, it follows from Lemma \ref{openchar} that $U\cap V$ is open.
+\end{proof}
+
+The following lemma is very useful.
+\begin{lemma}
+Let $X$ be a set and $B\subset\mathcal P(X)$. Then the set
+$$B':=\big\{\bigcap_{U\in C} F:F\subset B\text{ is finite}\big\}$$
+is a basis for $\langle B\rangle$.
+\end{lemma}
+\begin{proof}
+First, observe $B\subset B'\subset\langle B\rangle$, $B'$ is a subbasis for $\langle B\rangle$, and in particular condition (1) of \ref{basechar} is satisfied. Let $B_1,B_2\in B'$. Then $B_1\cap B_2\in B'$ hence, for any $x\in B_1\cap B_2$ one has an open subset of $B_1\cap B_2$ containing $x$, i.e., condition (2) of \ref{basechar} is satisfied, hence $B'$ is a basis for $\langle B\rangle$.
+\end{proof}
+
+\section {Neighourhoods and Neighourhood Bases}
+\begin{definition}
+Let $(X,T)$ be a topological space and $x\in X$. Then a set $N\subset X$ is a \textit{neighbourhood of $x$} if $x\in N$ and there exists an open set $U\subset X$ with $x\in U\subset N$.
+\end{definition}
+
+\begin{definition}
+Let $(X,T)$ be a topological space and let $A\subset X$. Then a set $N\subset X$ is said to be a \textit{neighbourhood} of $A$ if there exists an open set $U\subset X$ such that $A\subset U\subset N$.
+\end{definition}
+
+\begin{remark}
+A neighbourhood $N$ of a set or a point is said to be an \textit{open neighbourhood} if it is an open set. We denote by $\neigh{x}$ the set of all open neighbourhoods of $x$.
+\end{remark}
+
+\begin{proposition}
+Let $(X,T)$ be a topological space and $U\subset X$. The set $U$ is open if and only it is a neighbourhood of each of its points.
+\end{proposition}
+\begin{proof}
+This is a rephrasing of Lemma \ref{openchar}.
+\end{proof}
+
+\begin{definition}[Neighbourhood Basis]
+Let $(X,T)$ be a topological space and let $x\in X$. A family $\{N_\alpha\}_{\alpha\in A}$ of neighbourhoods if $x$ is said to be a \textit{neighbourhood basis at $x$} if, for each neighbourhood $N$ of $x$, there exists $\alpha\in A$ such that $N_\alpha\subset N$.
+\end{definition}
+
+\begin{example}
+If $x\in\R$ then the family $\{(x-1/n,x+1/n)\}_{n\in\N}$ forms a neighbourhood basis at $x$.
+\end{example}
+
+blerg
+
+\section{Closed Sets, Closures and Interiors}
+Let $(X,T)$ be a topological space.
+
+\begin{definition}
+A set $C\subset X$ is said to be \textit{closed} if its complement $X\setminus C$ is open.
+\end{definition}
+
+\begin{lemma}
+Let $T'=\{X\setminus U:U\in T\}$ be the set of closed sets in $X$. Then
+\begin{enumerate}
+    \item $\varnothing,X\in T'$,
+    \item $\bigcup_{\alpha\in A} C_\alpha\in T'$ for all finite families $\{C_\alpha\}_{\alpha\in A}$ in $T'$, and
+    \item $\bigcap_{\alpha\in A} C_\alpha\in T'$ for all families $\{C_\alpha\}_{\alpha\in A}$ in $T'$.
+\end{enumerate}
+\end{lemma}
+\begin{proof}
+(1) is obvious. (2) and (3) follow immediately from De Morgan's laws.
+\end{proof}
+
+\begin{definition}
+Let $A\subset X$. Define the \textit{closure} $\overline A$ of $A$ to be the intersection of all closed sets containing $A$, and define the \textit{interior} $A^\circ$ of $A$ to be the union of all open sets contained in $A$.
+\end{definition}
+
+It is clear that, if $A\subset X$, $\overline A$ is closed and $A^\circ$ is open.
+
+\begin{proposition}[Properties of Closures and Interiors]
+Let $A,B\subset X$. Then
+\begin{enumerate}
+    \item $A\subset\overline A$,
+    \item $\overline{\overline A}=\overline A$,
+    \item $A^\circ\subset A$,
+    \item $(A^\circ)^\circ =A^\circ$,
+    \item $\overline {A\cup B}=\overline A\cup\overline B$, and
+    \item $(A\cap B)^\circ=A^\circ\cap B^\circ$
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+(1) is clear. Since $\overline A$ is closed and contains $\overline A$, (2) follows. Similarly for (3) and (4). For (5), observe that $\overline{A\cup B}$ is a closed set containing $A$, hence $\overline A\subset \overline{A\cup B}$. Similarly, $\overline B\subset \overline{A\cup B}$ hence $\overline A\cup\overline B\subset \overline{A\cup B}$. Now $\overline A\cup \overline B$ is closed and contains $A\cup B$ hence it contains $\overline{A\cup B}$. Thus $\overline {A\cup B}=\overline A\cup\overline B$. (6) is similar.
+\end{proof}
+
+An important notion relating to closures is that of \textit{denseness}.
+\begin{definition}
+Let $X$ be a topological space. A subset $D\subset X$ is said to be \textit{dense in $X$} if $\overline D=X$.
+\end{definition}
+\begin{example}
+$\Q$ is dense in $\R$, and so is the set of \textit{dyadic rationals} $\{m/2^n:m\in\Z,n\in\N\}$.
+\end{example}
+
+\begin{proposition}
+Let $X$ be a topological space with a basis $B$. Then a subset $D\subset X$ is dense if and only if, for each nonempty set $U\in B$, $B\cap D\neq\varnothing$.
+\end{proposition}
+\begin{proof}
+Suppose $D$ is dense and let $\varnothing\neq U\in B$ and let $x\in U$. Then, since $U$ is an open neighbourhood of $x$ and $x\in\overline D$, $U\cap D\neq\varnothing$. Suppose now that $D$ is not dense. Then the nonempty open set $X\setminus\overline D$ contains a nonempty set $U\in B$, for which $B\cap\overline D=\varnothing$.
+\end{proof}
+
+The following proposition expresses a kind of \textit{transitivity}, if you will, of denseness.
+
+\begin{proposition}
+Let $X$ be a topological space, $Y\subset X$ and $Z\subset Y$. Then if $Z$ is dense in $Y$ and $Y$ is dense in $X$, $Z$ is dense in $X$.
+\end{proposition}
+\begin{proof}
+Let $U\subset X$ be nonempty and open. Then, since $Y$ is dense in $X$, $U\cap Y$ is nonempty and, by definition of the subspace topology, open in $Y$. Similarly, $Z\cap Y\cap U$ is nonempty and open in $Z$. But $Z\cap Y=Z$ hence $Z\cap N\neq\varnothing$, so since $U$ was arbitrary, by the preceding proposition, $Z$ is dense in $X$.
+\end{proof}
+
+Since denseness is trivially reflexive, the relation $S\sim T$ iff $S$ is dense in $T$ forms a preorder on $\mathcal P(X)$.
+
+\section{Types of Points}
+Let, as before, $(X,T)$ be a topological space.
+
+\begin{definition}
+Let $A\subset X$. The \textit{boundary} of $A$ is the set $\partial A:=\overline A\cap\overline{X\setminus A}$ and the \textit{exterior} of $A$ is the set $(X\setminus A)^\circ$.
+\end{definition}
+
+\begin{remark}
+Observe that $\partial A$, being the intersection of two closed sets, is closed.
+\end{remark}
+
+\begin{proposition}
+Let $A\subset X$. Then $\overline A=A^\circ\cup\partial A$.
+\end{proposition}
+\begin{proof}
+First, since $A^\circ\subset A$ it is clear that $A^\circ\subset\overline A$. Let $a\in\overline A\setminus A^\circ$. We wish to show that $x\in\overline{X\setminus A}$. Let $C$ be a closed set containing $X\setminus A$. Then $X\setminus C$ is an open set contained in $A$, hence $X\setminus C\subset A^\circ$. Thus $x\notin X\setminus C$ hence $x\in C$.
+\end{proof}
+
+\begin{corollary}
+Let $A\subset X$. Then $A$ is closed if and only if it contains its boundary.
+\end{corollary}
+
+\begin{proposition}
+\label{intboundandext}
+Let $A\subset X$. One has
+$$X=A^\circ\cup\partial A\cup (X\setminus A)^\circ$$
+Moreover, the union is disjoint. That is, each point $x\in X$ is an element of exactly one of the sets $A^\circ$, $\partial A$ and $(X\setminus A)^\circ$.
+\end{proposition}
+\begin{proof}
+Let $x\in X$. We consider three exhaustive mutually exclusive conditions on the open neighbourhoods of $x$.
+\begin{enumerate}
+    \item There exists a open neighbourhood $x$ contained in $A$. Then $x\in A^\circ$ by definition.
+    \item There exists an open neighbourhood of $x$ contained in $X\setminus A$. Then $x\in (X\setminus A)^\circ$.
+    \item Every open neighbourhood of $x$ intersects both $A$ and $X\setminus A$. Now $x\in\overline A$ since $X\setminus\overline A$ is open, hence if $x\in X\setminus\overline A$ one would have an open neighbourhood of $x$ contained in $X\setminus\overline A$, which would not intersect $A$. Similarly, $x\in\overline{X\setminus A}$. Hence $x\in\partial A$.
+\end{enumerate}
+The result follows.
+\end{proof}
+
+The preceding result justifies a classification of points based on their relationship to a subset $A$. Define
+
+\begin{definition}
+Let $A\subset X$ and $x\in X$. We say that $x$ is
+\begin{enumerate}
+    \item An \textit{interior point} of $A$ if there exists an open neighbourhood of $x$ contained in $A$,
+    \item An \textit{exterior point} of $A$ if there exists an open neighbourhood of $x$ contained in $X\setminus A$, and
+    \item A \textit{boundary point} of $A$ if every open neighbourhood of $x$ intersects with both $A$ and $X\setminus A$.
+\end{enumerate}
+\end{definition}
+
+\begin{remark}
+It follows from the proof of Proposition \ref{intboundandext} that (1) holds if and only if $x\in A^\circ$, (2) holds if and only if $x\in\partial A$ and (3) holds if and only if $x\in (X\setminus A^\circ)$.
+\end{remark}
+
+\begin{definition}
+Let $A\subset X$ and $x\in X$. Then $x$ is said to be a \textit{limit point} of $A$ if, for every neighbourhood $U$ of $x$, $A\cap (U\setminus\{x\})\neq\varnothing$. Also, $x$ is said to be an \textit{isolated point of $A$} if there exists a neighbourhood $U$ of $x$ such that $A\cap U=\{x\}$.
+\end{definition}
+
+\begin{proposition}
+Let $A\subset X$ and $x\in \partial A$. Then either $x\in A$ or $x$ is a limit point of $A$ or an isolated point of $A$, but not both.
+\end{proposition}
+\begin{proof}
+The definitions are clearly mutually exclusive. Suppose that $x$ is not a limit point of $A$. Then there exists a neighbourhood $U$ of $x$ such that $U\cap (A\setminus\{x\})=\varnothing$, but since $x$ is a boundary point for $A$, it follows that $\varnothing\neq A\cap U=\{x\}$.
+\end{proof}
+
+\section{Continuity}
+We now define the structure preserving maps in our category of topological spaces.
+
+\begin{definition}
+Let $X$ and $Y$ be topological spaces. A function $f:X\to Y$ is said to be \textit{continuous} if, for each open set $U\subset Y$, the inverse image $f^{-1}(X)$ is an open set in $X$. If $f$ is continuous and bijective and the function $f^{-1}$ is continuous, $f$ is said to be a \textit{homeomorphism}.
+\end{definition}
+
+% \begin{remark}
+% For fun: let $(X,T)$ and $(Y,S)$ be topological spaces. Then a continuous function $f:X\to Y$ induces a lattice homomorphism $f^*:S\to T$ given by
+% $$f^*(U)=f^{-1}(U)$$
+% if $f$ is bijective then $f^*$ is bijective and if $f$ is a homeomorphism then $f^*$ is an isomorphism with inverse $(f^{-1})^*$.
+% \end{remark}
+
+It is trivial to see that compositions of continuous functions are continuous. It is prudent to now prove the result mentioned in the introduction.
+
+\begin{theorem}
+\label{epsilondelta}
+Let $(X,d)$ and $(Y,\rho)$ be metric spaces and let $f:X\to Y$ be a function. Then the inverse image of every open set on $Y$ is open in $X$ if and only if for all $x\in X$ and $\varepsilon>0$ there exists $\delta>0$ such that $\rho(f(x),f(y))<\varepsilon$ whenever $d(x,y)<\delta$.
+\end{theorem}
+\begin{proof}
+$(\Rightarrow)$ Let $x\in X$ and $\varepsilon>0$. The set $f^{-1}(B_\varepsilon(f(x)))$ is open and contains $x$, hence there is $\delta>0$ such that $B_\delta(x)\subset f^{-1}(B_\varepsilon(f(x)))$, which is precisely what was wanted.\\
+$(\Leftarrow)$ Let $U\subset Y$ be open and let $x\in f^{-1}(U)$. Since $Y$ is open there exists $\varepsilon>0$ such that $B_\varepsilon(f(x))\subset Y$, and since $f$ is continuous (in the $\varepsilon$-$\delta$ sense) there exists $\delta>0$ such that $f(B_\delta(x))\subset B_\varepsilon(f(x))$. But then $B_\delta(x)\subset f^{-1}(Y)$ and, since $x\in Y$ was arbitrary, $f^{-1}(Y)$ is open.
+\end{proof}
+
+Another proposition reveals that topologies are ``low-level'' enough that, unlike metrics, continuity depends on the topology itself, not some deeper structure derived from a topology.
+
+\begin{proposition}
+\label{topdeterminesbycts}
+Let $X$ be a topological space and $T,S$ two distinct topologies on $X$. Then there exists a topological space $Y$ and a function $f:X\to Y$ which is continuous with respect to one of $T$ and $S$ but not the other.
+\end{proposition}
+\begin{proof}
+Let $Y$ be the set $\{0,1\}$ equipped with the topology $\{\varnothing, \{0\},\{0,1\}\}$. The space $Y$ is known as the \textit{Sierpinski space}. Suppose, without loss of generality, that $T$ contains an open set $U\notin S$. Then the function $f:X\to Y$ defined by
+$$f(x)=\begin{cases}0 & \text{if }x\in U\\1 & \text{if }x\in X\setminus U\end{cases}$$
+is continuous with respect to $T$ but not to $S$.
+\end{proof}
+
+One also concludes that, if for any topological space $X$, $C_X$ refers to the class
+$$C_X:=\{(Y,f):Y\text{ is a topological space and }f:X\to Y\text{ is continuous}\}$$
+then, for any two distinct topological spaces $X$ and $Y$, $C_X\neq C_Y$, even if $X$ and $Y$ have the same underlying set and \textit{even if $X$ and $Y$ are homeomorphic}. If $X$ and $Y$ are homeomorphic, however, if $\varphi:X\to Y$ is a homeomorphism , one has a bijection
+\begin{align*}
+    \varphi^*:C_Y&\to C_X\\
+    (W,f)&\mapsto(W,f\circ\varphi)
+\end{align*}
+which is an isomorphism in the sense that, for all $(V,f),(W,g)\in C_Y$, one has
+\begin{equation}
+\label{contclassm1}
+    \pi_1(\varphi^*(V,f))=V\text{ and}
+\end{equation}
+\begin{equation}
+\label{contclassm2}
+    \varphi^*(W, g\circ f)=(W,g\circ \pi_2(\varphi^*(V,f))
+\end{equation}
+Indeed, the converse holds.
+
+\begin{theorem}
+\label{yonedaish??}
+Let $X$ and $Y$ be topological spaces. Then there exists an isomorphism $F:C_Y\to C_X$ if and only if $X$ and $Y$ are homeomorphic.
+\end{theorem}
+\begin{proof}
+We need only prove the forward implication. Suppose there exists an isomorphism $F:C_Y\to C_X$. Let $\varphi:X\to Y$ be the function $\varphi:=\pi_2(F((Y,\Id_Y)))$. Then, for all $(W,f)\in C_Y$,
+\begin{align*}
+    F(W,g)&=F(W,g\circ\Id_Y)\\
+      &=(W,g\circ\pi_2(F(Y,Id_Y))\\
+      &=(W,g\circ\varphi)
+\end{align*}
+Now, since $F$ is surjective, there exists $(X,f)\in C_Y$ such that $$(X,\Id_X)=F(X,f)=(X,f\circ\varphi)$$ hence $\varphi$ has a continuous left inverse $f$. Let $H:C_X\to C_Y$ be given by $(W,g)\mapsto (W,g\circ f)$. Then, for all $(W,g)\in C_X$,
+$$(W,g)=(W,g\circ (f\circ\varphi))=F(W,g\circ f)=F(H(W,g))$$
+hence $H=F^{-1}$ since $F$ is bijective. Finally, $(Y,\Id_Y)=H(F(Y,\Id_Y))=(Y,\varphi\circ f)$ hence $f=\varphi^{-1}$ thus $\varphi$ is a homeomorphism.
+\end{proof}
+
+\begin{remark}
+The above proof in fact shows that an isomorphism $C_Y\to C_X$ takes the form $\varphi^*$ for some homeomorphism $\varphi^*$, and moreover that its inverse does, hence it is indeed a well defined notion of isomorphism.
+\end{remark}
+
+The following are often useful.
+
+\begin{proposition}[A collection of characterizations of continuity]\label{continuity characterisations}$ $\\
+Let $X$ and $Y$ be topological spaces and $f:X\to Y$ a function. The following are equivalent:
+\begin{enumerate}
+    \item\label{usual continuity} The function $f$ is continuous,
+    \item For each $x\in X$ and each neighbourhood $N$ of $f(x)$, $f^{-1}(N)$ is a neighbourhood of $x$,
+    \item For every closed set $C\subset Y$, $f^{-1}(C)$ is closed.
+    \item\label{continuity on subbasis} For any subbasis $B$ of $S$, $f^{-1}(U)$ is open for every $U\in B$,
+    \item For any basis $B$ of $S$, $f^{-1}(X\setminus U)$ is closed for every $U\in B$,
+    \item For every set $A\subset X$, $f(\overline A)\subset\overline{f(A)}$,
+    \item For every set $B\subset Y$, $\overline{f^{-1}(B)}\subset f^{-1}(\overline B)$, and
+    \item For every set $B\subset Y$, $f^{-1}(B^\circ)\subset\big(f^{-1}(B)\big)^\circ$
+\end{enumerate}
+\end{proposition}
+\begin{proof} I prove only that \eqref{usual continuity} is implied by \eqref{continuity on subbasis}. Let $B$ be a subbasis for the topology on $Y$ and suppose that $f^{-1}(V)$ is open in $X$ for each $V\in B$. Let $U\subset Y$ be open. We may write
+    $$U=\bigcup_{\alpha\in A} \bigcap_{\beta\in B_\alpha} V_{\beta,\alpha}$$
+for some family $\{ B_\alpha\}_{\alpha\in A}$ of finite sets and with $V_{\beta,\alpha}\in B$ for all $\alpha\in A$ and all $\beta\in B_\alpha$. Since inverse images preserve all unions and intersections,
+    $$f^{-1}(U)=\bigcup_{\alpha\in A} \bigcap_{\beta\in B_\alpha} f^{-1}(V_{\beta,\alpha}),$$
+which is open.
+\end{proof}
+
+A few more pieces of terminology:
+\begin{definition}
+Let $X$ and $Y$ be topological spaces and $f:X\to Y$ a function. Then
+\begin{itemize}
+    \item $f$ is said to be an \textit{open mapping} or simply \textit{open} if $f(U)$ is open for all open $U\subset X$,
+    \item $f$ is said to be a \textit{closed mapping} or simply \textit{closed} if $f(C)$ is open for all closed $C\subset X$,
+    \item $f$ is said to be an \textit{embedding} if $f$ is continuous, injective, and is a homeomorphism onto its image.
+\end{itemize}
+\end{definition}
+Now an important fact to notice is that, if $f:X\to Y$ is a function, the statements ``$f$ is continuous'', ``$f$ is open'' and ``$f$ is closed'' are \textit{independent}, in the sense that no one (or two) implies any other. For instance, the map $\R\to\R$ given by $x\mapsto 1/(1+x^2)$ is continuous, however its image of $\R$ is $(0,1]$, which is not open. As another example, the function $\pi_1:\R^2\to\R$ given by $(x,y)\mapsto x$ is continuous and open, however
+$$\pi_1\big(\{(x,y)\in\R^2:xy=1\}\big)=(-\infty,0)\cup(0,\infty)$$
+which is not closed. Counterexamples for each of the possible implications can be found with relative ease on the internet.
+
+\section{Subspaces}
+
+\begin{definition}
+Let $(X,T)$ be a topological space and let $Y\subset X$. The \textit{subspace topology} or \textit{induced topology} on $Y$ is the topology
+$$T|_Y:=\{Y\cap U:U\in T\}$$
+\end{definition}
+
+Subsets of spaces are always endowed with the subspace topology unless stated otherwise, and are referred to as \textit{subspaces}, since they are topological spaces in their own right. 
+\begin{remark}
+The subspace topology is a special case of a general construction called the \textit{initial topology}.
+\end{remark}
+
+\begin{example} Some familiar subspaces.
+\begin{itemize}
+    \item The circle $\mathbb S^1:=\{z\in\C:|z|=1\}\subset\C$,
+    \item The n-torus $\T^n:=(\mathbb S^1)^n\subset\C^n$,
+    \item The n-sphere $\mathbb S^n:=\{x\in\R^{n+1}:||x||=1\}\subset\R^{n+1}$.
+    \item The half-open interval $[0,1)\subset\R$, in which the set $[0,1/2)$ is open.
+\end{itemize}
+\end{example}
+
+\begin{proposition}
+Let $X$ be a topological space, $S\subset X$ a subspace and $C\subset S$. Then $X$ is closed if and only if is takes the form $S\cap V$ for some closed set $V\subset X$.
+\end{proposition}
+\begin{proof}
+Suppose that $C$ is closed in $S$. Then $S\setminus C$ is open in $S$, hence it takes the form $S\cap U$ for some open set $U$ in $X$. But then $V:=X\setminus U$ is closed and $C=S\cap V$. Conversely, if $C=S\cap V$ for some closed set $V\subset X$, then $S\setminus C=S\cap X\setminus V$ hence $C$ is closed in $S$.
+\end{proof}
+
+\begin{lemma}\label{open subset of open subspace}
+Let $X$ be a topological space and $S\subset X$ a subspace. If $S$ is open in $X$ and $U\subset S$ is open in $S$, $U$ is open in $X$. Similarly, if $S$ is closed in $X$ and $C\subset S$ is closed in $S$ then $C$ is closed in $X$.
+\end{lemma}
+\begin{proof}
+Easy.
+\end{proof}
+
+The following shows that continuity is a local property; it can be checked on open sets, or closed sets, provided the space is covered by finitely many of them.
+
+\begin{theorem}
+\label{continuousonsubspaces}
+Let $X$ and $Y$ be topological spaces, $A$ a set, $\{S_\alpha\}_{\alpha\in A}$ a family of subspaces of $X$ such that $X=\bigcup_{\alpha\in A}S_\alpha$ and $f:X\to Y$ be a function. Suppose that either (1) $S_\alpha$ is open in $X$ for every $\alpha\in A$, or (2) $A$ is finite and $S_\alpha$ is closed in $X$ for all $\alpha\in A$. Then $f$ is continuous if and only if $f|_{S_\alpha}$ is continuous for all $\alpha\in A$.
+\end{theorem}
+\begin{proof}
+Regardless of any assumptions on the $S_\alpha$, if $f$ is continuous, then so is $f|_{S_\alpha}$, for all $\alpha$. Suppose conversely that $f|_{S_\alpha}$ is continuous, for all $\alpha\in A$. In case (1), for any open $U\subset Y$, by assumption, $f|_\alpha^{-1}(U)$ is open in $S_\alpha$. Since $S_\alpha$ is open in $X$, Lemma \ref{open subset of open subspace} gives that $f|_\alpha^{-1}(U)$ is open in $X$. Since
+$$f^{-1}(U)=\bigcup_{\alpha\in A}f|_\alpha^{-1}(U),$$
+we conclude that $f^{-1}(U)$ is a union of open subsets of $X$, and so is itself open.
+
+Suppose that $A$ is finite and that $S_\alpha$ is closed in $X$ for all $\alpha\in A$. Let $C\subset Y$ be closed. Then $f|_\alpha^{-1}(C)$ is closed in $S_\alpha$ and hence in $X$ thus, since $f^{-1}(C)=\bigcup_{\alpha\in A}f|_\alpha^{-1}(C)$, one writes $f^{-1}(C)$ as a finite union of sets closed in $X$, hence it is closed.
+\end{proof}
+
+\begin{proposition}
+    Let $(X, T)$ be a topological space, $Y\subset X$ and let $B$ be a subbase for $T$. Then $B|_Y:=\{U\cap Y : U\in B\}$ is a subbase for $T|_{Y}$.
+\end{proposition}
+\begin{proof}
+    Clearly, $B|_Y\subset T|_Y$. If $U\in T|_Y$, then $U=V\cap Y$ for some open $Y\subset X$. Since $B$ is a subbase, one has a set $A$, finite sets $\beta_\alpha$ and sets $V^\alpha_\beta\in B$ such that
+        $$U=\biggl(\bigcup_{\alpha\in A}\bigcap_{\beta\in B_{\alpha}} V_{\beta}^\alpha\biggr)\bigcap Y=\bigcup_{\alpha\in A}\bigcap_{\beta\in B_{\alpha}} \Bigl(V_{\beta}^\alpha \cap Y\Bigr)$$
+    so that $B|_Y$ is a subbase for $T|_Y$.
+\end{proof}
+
+\section{Sharing is Caring}
+We can use maps between topological spaces and sets to topologise sets. If we have a function $f:X\to Y$ from a set $X$ into a topological space $Y$ then, in a certain sense, all that is needed for $f$ to be a continuous map is for $X$ to have as open sets the inverse images of open sets in $Y$. This idea can be extended to arbitrary families of maps.
+
+\begin{definition}
+\label{initialdef}
+Let $X$ be a set, $\{(Y_\alpha, S_\alpha)\}_{\alpha\in A}$ a family of topological spaces with $\{f_\alpha\}_{\alpha\in A}$ a family of functions $f_\alpha:X\to Y_\alpha$. The \textit{initial topology $\initial{X}{\{f_\alpha\}_{\alpha\in A}}$ on $X$ induced by $\{f_\alpha\}_{\alpha\in A}$} is defined to be the intersection of all topologies $T$ on $X$ such that every $f_\alpha:(X, T)\to (Y_\alpha, S_\alpha)$ is continuous.
+\end{definition}
+
+If the family $\{f_\alpha\}_{\alpha\in A}$ is finite, i.e., $\{f_j\}_{1\leq j\leq n}$, we will just write $\initial{X}{f_1, f_2, \hdots, f_n}$.
+
+\begin{proposition}\label{initial subbase proposition}
+    Let $X$ be a set, $\{(Y_\alpha, S_\alpha)\}_{\alpha\in A}$ a family of topological spaces with $\{f_\alpha\}_{\alpha\in A}$ a family of functions $f_\alpha:X\to Y_\alpha$. The set
+    \begin{equation}\label{initial subbase}
+        \{f_\alpha^{-1}(U):\alpha\in A,U\in S_\alpha\}
+    \end{equation}
+    is a subbase for $\initial{X}{\{f_\alpha\}_{\alpha\in A}}$.
+\end{proposition}
+\begin{proof}
+    Let $T$ denote the topology on $X$ generated by $\{f_\alpha^{-1}(U):\alpha\in A,U\in S_\alpha\}$. By definition, any topology $T'$ for which $f_\alpha:(X, T')\to (Y_\alpha, S_\alpha)$ is continuous for every $\alpha\in A$ contains the inverses image under $f_\alpha$ of all open subsets of all $X_\alpha$, and hence contains $T$. In particular, $T\subset \initial{X}{\{f_\alpha\}_{\alpha\in A}}$. But of course, $T$ itself makes the $f_\alpha$ continuous, and so $\initial{X}{\{f_\alpha\}_{\alpha\in A}}\subset T$.
+\end{proof}
+
+\begin{example}
+    Using Proposition \ref{initial subbase proposition}, we can identify our first example of an initial topology in the wild. If $X$ is a topological space and $Y\subset X$, then $i^{-1}(U)=Y\cap U$ for any $U\subset X$ open, where $i:Y\to X$ is the inclusion, so in this case, since the subspace topology on $Y$ consists of sets of the form $i^{-1}(U)$ for $U\subset X$ open, it is in particular generated by such sets, and hence coincides with $\initial{Y}{i}$.
+\end{example}
+
+\begin{proposition}
+\label{initialcont}
+Let $X$ be a set, $\{Y_\alpha\}_{\alpha\in A}$ a family of topological spaces and $\{f_\alpha:X\to Y_\alpha\}_{\alpha\in A}$ a family of functions. Let $Z$ be a topological space and let $g:Z\to X$ be a function. Then $g$ is continuous with respect to $\initial{X}{\{f_\alpha\}_{\alpha\in A}}$ if and only if $f_\alpha\circ g$ is continuous for every $\alpha\in A$.
+\end{proposition}
+\begin{proof}
+    Certainly, if $g$ is continuous, then so is $f_\alpha\circ g$ for all $\alpha\in A$. Suppose conversely that $f_\alpha\circ g$ is continuous for all $\alpha\in A$. By Proposition \ref{continuity characterisations} \eqref{continuity on subbasis}, to see that $g$ is continuous, it suffices to check that $g^{-1}(U)$ is open for each $U$ in the subbase \eqref{initial subbase}. However, it is quite literally the hypothesis that $g^{-1}(f_\alpha^{-1}(U))$ is open for each $\alpha\in A$ and each $U\in S_\alpha$. 
+\end{proof}
+
+The notion of \textit{initial topology} has a dual; that of \textit{final topology}.
+
+\begin{theorem}
+Let $\{(X_\alpha,T_\alpha)\}_{\alpha\in A}$ be a family of topological spaces, $Y$ a set and $\{f_\alpha\}_{\alpha\in A}$ a family of functions $f_\alpha:X_\alpha\to Y$. Define
+    $$\final{Y}{\{f_\alpha\}_{\alpha\in A}}:=\{U\subset Y:f_\alpha^{-1}(U)\in T_\alpha\text{ for all }\alpha\in A\}$$
+then $\final{Y}{\{f_\alpha\}_{\alpha\in A}}$ is a topology on $Y$ such that $f_\alpha:(X_\alpha, T_\alpha)\to (Y, \final{Y}{\{f_\alpha\}_{\alpha\in A}})$ is continuous for every $\alpha\in A$ and, whenever $S$ is a topology on $Y$ such that $f_\alpha:(X_\alpha, T_\alpha)\to (Y, S)$ is continuous for every $\alpha\in A$, then $S\subset\final{X}{\{f_\alpha\}_{\alpha\in A}}$.
+\end{theorem}
+\begin{proof}
+First, note that, for all $\alpha\in A$, $f_\alpha^{-1}(\varnothing)=\varnothing$ and $f_\alpha^{-1}(Y)=X$, hence $\varnothing,Y\in \final{Y}{\{f_\alpha\}_{\alpha\in A}}$. If $\{U_\beta\}_{\beta\in B}$ is a family in $\final{Y}{\{f_\alpha\}_{\alpha\in A}}$ then, for all $\alpha\in A$,
+    $$f_\alpha^{-1}\Big(\!\bigcup_{\beta\in B} U_\beta\Big)=\bigcup_{\beta\in B}f_\alpha^{-1}\left(U_\beta\right)\in T_\alpha$$
+hence $\bigcup_{\beta\in B} U_\beta\in \final{Y}{\{f_\alpha\}_{\alpha\in A}}$ and, similarly, if $A$ is finite, $\bigcap_{\beta\in B} U_\beta\in \final{Y}{\{f_\alpha\}_{\alpha\in A}}$. This proves that $\final{Y}{\{f_\alpha\}_{\alpha\in A}}$ is a topology. That $f_\alpha:(X_\alpha,T_\alpha)\to(Y,S)$ is continuous for all $\alpha\in A$ is clear by construction. Finally, if $S$ is a topology on $Y$ making the $f_\alpha$ continuous, then, whenever $U\in S$ and $\alpha\in A$, $f_\alpha^{-1}(U)\in T_\alpha$. It follows that $U\in \final{Y}{\{f_\alpha\}_{\alpha\in A}}$. Since $U$ was arbitrary, $S\subset \final{Y}{\{f_\alpha\}_{\alpha\in A}}$.
+\end{proof}
+
+Final topologies enjoy a characterisation of continuity dual to that of initial topologies.
+
+\begin{theorem}
+    Let $\{X_\alpha\}_{\alpha\in A}$ be a family of topological spaces, $Y$ a set and $\{f_\alpha\}_{\alpha\in A}$ a family of functions $f_\alpha:X_\alpha\to Y$. Let $Z$ be a topological space and $g:Y\to Z$ a function. Then $g$ is continuous with respect to $\final{Y}{\{f_\alpha\}_{\alpha\in A}}$ if and only if $g\circ f_\alpha$ is continuous for every $\alpha \in A$.
+\end{theorem}
+\begin{proof}
+    Of course, if $g$ is continuous, then certainly $g\circ f_\alpha$ is, for every $\alpha\in A$. Suppose conversely that $g\circ f_\alpha$ is continuous for every $\alpha$, and let $U\subset Z$ be open. Then, for any $\alpha\in A$, $(g\circ f_\alpha)^{-1}(U)=f_\alpha^{-1}(g^{-1}(U))$ is open. Therefore $g^{-1}(U)\in\final{Y}{\{f_\alpha\}_{\alpha\in A}}$ by definition, and since $U$ was arbitrary, $g$ is continuous.
+\end{proof}
+
+In the next section, we will see just how indispensable the final and initial topologies are.
+
+\section{Products, Sums and Quotients}
+\subsection{Products}
+One of the most important constructions in topology is that of product spaces. First, we recall the generalised Cartesian product of sets. 
+
+\begin{definition}\label{product definition}
+Let $\{X_\alpha\}_{\alpha\in A}$ be a family of sets. Then the \textit{Cartesian product} of the family $\{X_\alpha\}_{\alpha\in A}$ is the set $$\prod_{\alpha\in A}X_\alpha:=\Big\{f:A\to \bigcup_{\alpha\in A}X_\alpha:f(\alpha)\in X_\alpha\text{ for all }\alpha\in A\Big\}$$
+\end{definition}
+This definition is taken because, for finite products, tuples $(x_1,x_2,\hdots,x_n)\in X_1\times X_2\times \hdots\times X_n$ can easily be seen to be in correspondence with functions $f:\{1,2,\hdots,n\}\to X_1\cup X_2\cup\hdots\cup X_n$ with the property that $f(i)\in X_i$ for all $i\in\{1,2,\hdots,n\}$. We generalise to infinite products using this observation.
+
+\begin{definition}
+Let $\{X_\alpha\}_{\alpha\in A}$ be a family of topological spaces. The \textit{topological product} of the family $\{X_\alpha\}_{\alpha\in A}$ is the set $\prod_{\alpha\in A}$ with the initial topology induced by the maps $\pi_\alpha$ given by $\pi_\alpha(f)=f(\alpha)$.
+\end{definition}
+
+\begin{example}\label{product examples}Some examples of topological products.
+\begin{enumerate}
+    \item $\R^n=\prod_{i=1}^n\R$,
+    \item The $n$-torus $\mathbb T^n=\prod_{i=1}^n\mathbb S^1$,
+    \item The cylinder $\mathbb S^1\times[0,1]$,
+    \item The \textit{Hilbert Cube} $[0,1]^\N:=\prod_{n\in\N} [0,1]$.
+\end{enumerate}
+\end{example}
+
+\begin{proposition}
+Let $\{X_\alpha\}_{\alpha\in A}$ be a family of sets. Then a set $U\subset\prod_{\alpha\in A}X_\alpha$ is open if and only if $U$ is of the form
+$$\prod_{\alpha\in A}U_\alpha$$
+where $U_\alpha\subset X_\alpha$ is open for each $\alpha$ and $U_\alpha=X_\alpha$ for all but finitely many $\alpha$.
+\end{proposition}
+\begin{proof}
+The initial topology is generated by the sets $\pi_\alpha^{-1}(U)$ for $U\subset X_\alpha$ open. Now
+    $$\pi_\alpha^{-1}(U)=\prod_{\beta\in A} U_\beta$$
+where $U_\beta=X_\alpha$ if $\beta\neq\alpha$ and $U_\alpha=U$. Now, if $\{U_\alpha\}_{\alpha\in A}$ is a family of open sets $U_\alpha\in X_\alpha$ with $U_\alpha=X_\alpha$ for all but a finite set $B\subset A$, then
+\begin{equation}
+\label{prodsubbasis}
+\prod_{\alpha\in A}U_\alpha=\bigcap_{\alpha\in B}\pi_\alpha^{-1}(U_\alpha)
+\end{equation}
+hence such sets are open.
+
+For the converse, let $U\subset\prod_{\alpha\in A}$ be open. Then $U$ can be written as a union of sets of the form (\ref{prodsubbasis}), which will again take the same form.
+\end{proof}
+
+As a special case of Proposition \ref{initialcont}, we have the following.
+
+\begin{proposition}
+\label{productcont}
+Let $\{X_\alpha\}_{\alpha\in A}$ be a family of topological spaces and $\{\pi_\alpha\}_{\alpha\in A}$ the projections. Then a function $f:Y\to\prod_{\alpha\in A}$ is continuous if and only if the composition $f\circ\pi_\alpha$ is continuous for each $\alpha\in A$.
+\end{proposition}
+
+Next, we state and prove something terribly obvious, but nonetheless important.
+
+\begin{proposition}\label{equality in products}
+    Let $\{X_\alpha\}_{\alpha\in A}$ be a family of topological spaces, and let $x,y\in \prod_{\alpha\in A} X_\alpha$. Then $x=y$ if and only if $\pi_\alpha(x)=\pi_\alpha(y)$ for all $\alpha\in A$.
+\end{proposition}
+\begin{proof}
+    The forward direction is obvious. $(\Leftarrow)$ By construction, $x$ is the function $x:A\to \bigcup_{\alpha\in A} X_\alpha$ given by $x(\alpha)=\pi_\alpha(x)$, and similarly for $y$. Two functions on the same domain are identical if they agree everywhere, and by hypothesis, $x(\alpha)=\pi_\alpha(x)=\pi_\alpha(y)=y(\alpha)$, hence $x=y$.
+\end{proof}
+
+The following is the so-called \textit{universal property} of the product, as it determines the relationship between a product and every other space in the ``universe'' of topological spaces.
+
+\begin{proposition}[Product is a Product]$ $\\
+Let $X$ be a topological space, $\{Y_\alpha\}_{\alpha\in A}$ a family of topological spaces, and $\{f_\alpha\}_{\alpha\in A}$ a family of continuous functions such that $f_\alpha:X\to Y_\alpha$ for each $\alpha\in A$. Then there exists a unique continuous function $f:X\to\prod_{\alpha\in A}Y_\alpha$ such that the following diagram commutes
+\begin{center}
+    \begin{tikzcd}
+        X \arrow[dddrr, "f_\alpha"] \arrow[ddd, "f" left] \\
+        & \\
+        &\\
+        \prod\limits_{\alpha'\in A} Y_{\alpha'} \arrow[rr, "\pi_\alpha" below] &  & Y
+    \end{tikzcd}
+\end{center}
+for all $\alpha\in A$, i.e., $f\circ\pi_\alpha=f_\alpha$ for all $\alpha\in A$. We call $f$ the product of the $f_\alpha$ and write $f=\prod_{\alpha\in A}f_\alpha$.
+\end{proposition}
+\begin{proof}
+Define $f:X\to\prod_{\alpha\in A}Y_\alpha$ by $f(x)(\alpha)=f_\alpha(x)$. Then $f\circ\pi_\alpha=f_\alpha$, so $f$ is continuous by Proposition \ref{productcont}. If $g:X\to\prod_{\alpha\in A}Y_\alpha$ satisfies $g\circ\pi_\alpha=f_\alpha$ then for all $x\in X$ and all $\alpha\in A$, one has equalities $\pi_\alpha(g(x))=(g\circ \pi_\alpha)(x)=f_\alpha(x)=(\pi_\alpha\circ f)(x)=\pi_\alpha(f(x))$ and hence by Proposition \ref{equality in products}, $g(x)=f(x)$ for all $x\in X$, and so $g=f$.
+\end{proof}
+
+The topology on a product can be described more concretely using a basis.
+
+\begin{proposition}\label{product basis proposition}
+    Let $\{X_\alpha\}_{\alpha\in A}$ be a family of topological spaces. The set
+        $$\Bigl\{\prod_{\alpha\in A} U_\alpha : U_\alpha\subset X_\alpha\text{ open},\,U_\alpha=X_\alpha\text{ for all but finitely many }\alpha\in A\Bigr\}$$
+    is a basis for the topology on $\prod_{\alpha\in A} X_\alpha$.
+\end{proposition}
+\begin{proof}
+    By Proposition \ref{initial subbase proposition}, we have a subbase for the product topology given by $\{\pi_\alpha^{-1}(U) : \alpha\in A, U\subset X_\alpha\text{ open}\}$. Pick $\alpha_1\in A$ and $U_{\alpha_1}\subset X_{\alpha_1}$ open. If $x\in\prod_{\alpha\in A} X_\alpha$ then, by definition, $x\in \pi^{-1}_{\alpha_1}(U_{\alpha_1})$ if and only if $\pi_{\alpha_1}(x)\in U_{\alpha_1}$. Therefore, for $x$ to be an element of $\pi^{-1}_{\alpha_1}(U_{\alpha_1})$, there is no restriction on the $\pi_\alpha(x)$ when $\alpha\neq\alpha_1$. Indeed, any choice of elements $x_\alpha$ in $X_\alpha$, for each $\alpha\in A$, gives rise to an element of $\pi^{-1}_{\alpha_1}(U_{\alpha_1})$, provided that $x_{\alpha_1}\in U_{\alpha_1}$. It follows that, if we write $U_\alpha=X_\alpha$ for every $\alpha\in A\setminus\{\alpha_1\}$, that
+        $$\pi^{-1}_{\alpha_1}(U_{\alpha_1})=\prod_{\alpha\in A} U_\alpha.$$
+    Moreover, if $\alpha_1,\alpha_2,\hdots, \alpha_n\in A$ are distinct, and $U_{\alpha_j}\subset X_{\alpha_j}$ is open for each $1\leq j\leq n$, then
+    \begin{equation}\label{product basis}
+        \bigcap_{1\leq j\leq n}\pi^{-1}_{\alpha_j}(U_{\alpha_j})=\prod_{\alpha\in A} U_\alpha
+    \end{equation}
+    where we set $U_\alpha=X_\alpha$ if $\alpha\neq \alpha_j$ for any $1\leq j\leq n$. But since sets of the form $\pi^{-1}_{\alpha_1}(U_{\alpha_1})$ form a subbasis for $\initial{\prod_{\alpha\in A}X_\alpha}{\{\pi_{\alpha}\}_{\alpha\in A}}$, sets of the form \eqref{product basis} form a basis, which is what we set out to prove.
+\end{proof}
+
+\begin{proposition}
+Let $\{X_\alpha\}_{\alpha\in A}$ be a family of topological spaces. The projections $\pi_\alpha$ are open maps.
+\end{proposition}
+\begin{proof}
+Let $\beta\in A$ and let $U\subset\prod_{\alpha\in A}X_\alpha$ be open. Let $x_\beta\in\pi_\beta(U)$, and pick $x\in U$ with $\pi_\beta(x)=x_\beta$. By Proposition \ref{product basis proposition}, there is a family $\{U_\alpha\}_{\alpha\in A}$ of open sets $U_\alpha\subset X_\alpha$ satisfying
+    $$x\in \prod_{\alpha\in A} U_\alpha\subset U.$$
+It follows that $x_\beta\in U_\beta=\pi_\beta(\prod_{\alpha\in A} U_\alpha)\subset \pi_\beta(U)$, and so $x_\beta$ has an open neighbourhood in $\pi_\beta(U)$.
+\end{proof}
+
+\begin{proposition}
+\label{closureproduct}
+Let $\{X_\alpha\}_{\alpha\in A}$ be a family of topological spaces, and let $\{S_\alpha\}_{\alpha\in A}$ be a family of sets such that $S_\alpha\subset X_\alpha$ for all $\alpha\in A$. Then
+$$\overline{\prod_{\alpha\in A} S_\alpha}=\prod_{\alpha\in A}\overline {S_\alpha}$$
+\end{proposition}
+\begin{proof}
+First, observe that if $Y$ is a topological space and $S\subset Y$, then $x\in\overline S$ if and only if $U\cap S\neq \varnothing$ for all open neighbourhoods $U$ of $x$. Let $x\in\overline{\prod_{\alpha\in A}S_\alpha}$. We wish to show that $\pi_\alpha(x)\in \overline S_\alpha$ for all $\alpha\in A$. Let $\alpha\in A$ and let $U$ be an open neighbourhood of $\pi_\alpha(x)$. There exists $y\in \pi^{-1}_\alpha(U)\cap \prod_{\alpha\in A}S_\alpha$ by hypothesis. But then $\pi_\alpha(y)\in U\cap S_\alpha$ hence $U\cap S_\alpha\neq\varnothing$. Since $U$ was an arbitrary open neighbourhood of $\pi_\alpha(x)$, it follows that $\pi_\alpha(x)\in \overline {S_\alpha}$.
+
+For the converse, let $x\in\prod_{\alpha\in A}\overline {S_\alpha}$ and let $U\subset\prod_{\alpha\in A} X_\alpha$ be a neighbourhood of $x$. Then $x$ has an open neighbourhood $\prod_{\alpha\in A}U_\alpha\subset U$ with $U_\alpha=X_\alpha$ for all but finitely many $\alpha\in A$. By hypothesis, $U_\alpha\cap S_\alpha\neq\varnothing$ for all $\alpha\in A$, hence there exists a point $$y\in\prod_{\alpha\in A}U_\alpha\cap\prod_{\alpha\in A}S_\alpha.$$
+which shows that $x\in\overline{\prod_{\alpha\in A}S_\alpha}.$
+\end{proof}
+
+\subsection{Sums}
+First, we recall the disjoint union of sets.
+
+\begin{definition}
+Let $\{X_\alpha\}_{\alpha\in A}$ be a family of sets. Then the disjoint union $\coprod_{\alpha\in A}X_\alpha$ is the set
+$$\coprod_{\alpha\in A}X_\alpha:=\{(\alpha, x):\alpha\in A, x\in X_\alpha\}$$
+Moreover, we define the \textit{inclusion maps} $i_\beta:X_\beta\to\coprod_{\alpha\in A}X_\alpha$ for $\beta\in A$ by $i_\beta(x)=(\beta,x)$ for all $x\in X_\beta$.
+\end{definition}
+
+If it were the case that the $X_\alpha$ were disjoint, one could proceed without considering tuples $(\alpha, x)$ and simply take the union of the $X_\alpha$. However a family of sets is not pairwise disjoint in general, so to give a proper ``sum'' one is required to ``tag'' an element $x\in X_\alpha$ with its ``source'' set by replacing it in the union with the element $(\alpha, x)$.
+
+\begin{definition}
+Let $\{X_\alpha\}_{\alpha\in A}$ be a family of topological spaces. The \textit{topological sum} or \textit{disjoint union} $\coprod_{\alpha\in A}X_\alpha$ of the family $\{X_\alpha\}_{\alpha\in A}$ is the set $\coprod_{\alpha\in A}X_\alpha$ with the final topology induced by the inclusions.
+\end{definition}
+
+As per the previous remark, the topological sum $\coprod_{\alpha\in A}X_\alpha$ can be though of as a union which is forced to be disjoint, i.e., each of the $X_\alpha$ are, in a certain sense, placed alongside one another, having no relation to eachother, and preserving their original topology, in the sense that any open set in their sum is just a union of open sets in the original spaces.
+
+\begin{lemma}
+Let $\{X_\alpha\}_{\alpha\in A}$ be a family of topological spaces. The inclusions $i_\beta$ are an open maps.
+\end{lemma}
+\begin{proof}
+Pick $\beta\in A$ and let $U\subset X_\beta$ be open. Then, since $i_\beta$ is injective, $i_\beta^{-1}(i_\beta(U))=U$. If $\alpha\neq\beta$ then $i_\alpha^{-1}(i_\beta(U))=\varnothing$. Therefore $i_\alpha^{-1}(i_\beta(U))$ is open for each $\alpha\in A$, which is the definition of open sets in the final topology $\final{\coprod_{\alpha\in A} X_\alpha}{\{i_\alpha\}_{\alpha\in A}}$.
+\end{proof}
+
+\begin{corollary}
+Let $\{X_\alpha\}_{\alpha\in A}$ be a family of topological spaces and let $U\subset\coprod_{\alpha\in A}X_\alpha$ be a set. Then $U$ is open if and only if there exist open sets $U_\alpha\subset X_\alpha$ for each $\alpha\in A$ such that
+$$U=\bigcup_{\alpha\in A}i_\alpha(U_\alpha).$$
+\end{corollary}
+\begin{proof}
+The forward direction follows from openness of the inclusions. Suppose that $U$ is open. Then, since each $i_\alpha$ is a bijection onto its image, and the images of the $i_\alpha$ partition $\coprod_{\alpha\in A}X_\alpha$, we get
+    $$U=\bigcup_{\alpha\in A} i_\alpha(i_\alpha^{-1}(U)).$$
+Since the inclusions are, by construction, continuous, for each $\alpha\in A$, $i_\alpha^{-1}(U)$ is an open subset of $X_\alpha$.
+\end{proof}
+
+\begin{proposition}
+\label{coprodcont}
+Let $\{X_\alpha\}_{\alpha\in A}$ be a family of topological spaces, $Y$ a topological space and $f:\coprod_{\alpha\in A}X_\alpha\to Y$ a function. Then $f$ is continuous if and only if $f\circ i_\alpha:X_\alpha\to Y$ is continuous for each $\alpha\in A$.
+\end{proposition}
+\begin{proof}
+The forward direction is trivial. Suppose $i_\alpha\circ f:X_\alpha\to Y$ is continuous for each $\alpha\in A$ and let $U\subset Y$ be open. Then, if $\alpha\in A$, $(f\circ i_\alpha)^{-1}(U)=i_\alpha^{-1}(f^{-1}(U))$ hence $i_\alpha^{-1}(f^{-1}(U))$ is open for all $\alpha\in A$, i.e., $f^{-1}(U)$ is open.
+\end{proof}
+
+\begin{proposition}[Disjoint Union is a Coproduct]$ $\\
+Let $\{X_\alpha\}_{\alpha\in A}$ be a family of topological spaces, $Y$ a topological space and, for each $\alpha\in A$, $f_\alpha:X_\alpha\to Y$ a continuous map. Then there is a unique continuous map $f:\coprod_{\alpha\in A}X_\alpha\to Y$ such that the following diagram commutes
+\begin{center}
+    \begin{tikzcd}
+        Y \\
+        & \\
+        & \\
+        \prod\limits_{\alpha'\in A} X_{\alpha'} \arrow[uuu, "f"] &  & X \arrow[lluuu, "f_\alpha" above right] \arrow[ll, "i_\alpha" below]
+    \end{tikzcd}
+\end{center}
+i.e., one has $f_\alpha=f\circ i_\alpha$ for all $\alpha\in A$. We denote the function $f$, called the \textit{sum} or \textit{disjoint union of the $f_\alpha$} by $\coprod_{\alpha\in A}f_\alpha$.
+\end{proposition}
+\begin{proof}
+Define the function $f:\coprod_{\alpha\in A}X_\alpha\to Y$ by $f(\alpha,x)=f_\alpha(x)$. Then $f\circ i_\alpha=f_\alpha$, so that existence holds. Moreover, uniqueness is clear and continuity follows from Proposition \ref{coprodcont}.
+\end{proof}
+
+\subsection{Quotients}
+Another of the most important constructions in topology is given by the quotient of a space by some equivelance relation. For instance, one might think of the circle $\mathbb S^1$ as being the interval $[0,1]$ with its ends ``joined'' or ``identified'', or one might think of a torus as being a square $[0,1]^2$ with its edges ``identified'' in a particular way. Equivalence relations and the quotient topology formalize this idea and allow for topological spaces to be ``glued together'' in whichever way one would like.
+
+Recall the notation where, if $\sim$ is an equivelance relation on a set $X$, then
+$$[x]:=\{y\in X:x\sim y\}.$$
+
+\begin{definition}
+Let $X$ be a topological space and let $\sim$ be an equivalence relation on the set $X$. The \textit{quotient space} $X/{\sim}$ is the set
+$$X/{\sim}:=\{[x]:x\in X\}$$
+with the final topology induced by the projection $\pi:X\to X/{\sim}$ given by $x\mapsto [x]$.
+\end{definition}
+
+\begin{example}Examples of some quotient spaces.
+\begin{enumerate}
+    \item Consider the topological space $[0,1]$ with the minimal equivalence relation for which $0\sim 1$. Then $[0,1]/\sim$ is homeomorphic to $\mathbb S^1$. Indeed, the map
+    $$f:[0,1]/\sim\:\to\mathbb S^1:[x]\mapsto e^{2\pi ix}$$
+    is a homeomorphism.
+    \item Consider the topological space $[0,1]\times[0,1]$ and the equivalence relation where $(0,x)\sim(1,x)$ and $(x,0)\sim (x,1)$ for all $x\in[0,1]\times[0,1]$. Then $([0,1]\times[0,1])/\sim$ is homeomorphic to the torus $\mathbb T^2$.
+    \item Let $X$ be a topological space and $A\subset X$. The \textit{adjugate} $X/A$ of $X$ by $A$ is the quotient space $X/{\sim}$ where $\sim$ is the equivalence relation given by the partition $\{A\}\cup\{\{x\} : x\in X\setminus A\}$.
+    \item Let $X$ be a topological space. The \textit{cone} $cX$ of $X$ is the adjugate $$cX:=(X\times[0,1])/\{(x,1):x\in X\}.$$
+    \item Let $X$ be a topological space and $G$ a group acting on $X$. Then the quotient $X/G$ is the quotient $X/{\sim}$ where $x\sim y$ if $x,y\in X$ and $x=gy$ for some $g\in G$. In this way we recover the circle $\mathbb S^1$ and the torus $\mathbb T^2$ by
+    \begin{align*}
+        \mathbb S^1&\cong \R/\Z\text{, and}\\
+        \mathbb T^2&\cong \R^2/\Z^2
+    \end{align*}
+    where the actions of $\Z$ on $\R$ and $\Z^2$ on $\R^2$ are given by addition. In general, one has $\mathbb T^n\cong\R^n/\Z^n$.
+\end{enumerate}
+\end{example}
+
+\begin{definition}
+Let $X$ and $Y$ be topological spaces and $f:X\to Y$ a continuous surjective map. Then $f$ is said to be a \textit{quotient map} if, for every subset $U\subset Y$, $U$ is open if and only if $f^{-1}(U)$ is open.
+\end{definition}
+
+Clearly, $f:X\to Y$ is a quotient map if and only if it is surjective and $Y$ carries the final topology induced by $f$. Hence we call the final topology induced by a surjective map $f$ the \textit{quotient topology induced by $f$}. It is clear that the projection $\pi:X\to X/{\sim}$ from a space to its quotient by an equivalence relation $\sim$ is a quotient map. Moreover, images of quotient maps are homeomorphic to quotients of their domain, but we will need a little more work before we show this.
+
+\begin{proposition}
+\label{saturatedequiv}
+Let $X$ and $Y$ be topological spaces, $f:X\to Y$ a surjective function and $C\subset X$. The following are equivalent.
+\begin{enumerate}
+    \item $f^{-1}(f(C))=C$,
+    \item $C=f^{-1}(S)$ for some set $S\subset Y$,
+    \item For each $x\in f(C)$, one has $f^{-1}(\{x\})\subset C$.
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+That $(1)\Rightarrow(2)$ is trivial. To see that $(2)\Rightarrow (3)$, let $S\subset Y$ be such that $C=f^{-1}(S)$. Then, for all $y\in C$, $f(y)\in S$. Hence, if $x=f(y)\in f(C)$, $x\in S$. But $$f^{-1}(\{x\})\subset f^{-1}(S)=C.$$
+For the implication $(3)\Rightarrow(1)$, observe that the inclusion $f^{-1}(f(C))\subset C$ is trivial. Suppose $x\in f^{-1}(f(C))\setminus C$. Let $y\in f^{-1}(f(C))$ and set $x=f(y)$. Then $x\in f(C)$ hence $f^{-1}(x)\subset C$, so in particular $x\in C$.
+\end{proof}
+
+\begin{definition}
+Let $X$ and $Y$ be topological spaces, $f:X\to Y$ a surjective function. Then a set $C\subset X$ is said to be \textit{saturated with respect with $f$} if any (hence all) of the equivalent conditions in Proposition \ref{saturatedequiv} hold.
+\end{definition}
+
+\begin{proposition}
+Let $X$ and $Y$ be topological spaces and $f:X\to Y$ a continuous surjection. Then $f$ is a quotient map if and only if, for every open set $C\subset X$ saturated with respect to $f$, $f(C)$ is open in $Y$.
+\end{proposition}
+\begin{proof}
+$(\Rightarrow)$ suppose $f$ is a quotient map and let $C\subset X$ be an open set saturated with respect to $f$. Then $f^{-1}(f(C))=C$ which is open hence $f(C)$ is open. $(\Leftarrow)$ suppose that $f$ maps saturated open sets to open sets and let $U\subset Y$. Since $f$ is continuous one only needs to check that if $f^{-1}(U)$ is open, $U$ is. But if $f^{-1}(U)$ is open then, since $f$ is surjective, $U$ is the image $f(f^{-1}(U))$ of the open saturated set $f^{-1}(U)$, hence is open.
+\end{proof}
+
+\begin{proposition}[Universal Property of Quotient Spaces]$ $\label{quotientuniversal}\\
+Let $X$ and $Y$ be topological spaces, $\sim$ an equivalence relation on $X$ and $\pi:X\to X/{\sim}$ the projection. Then a function $g:X/{\sim}\to Y$ is continuous if and only if the composition $g\circ\pi:X\to Y$ is continuous.
+\end{proposition}
+\begin{proof}
+$(\Rightarrow)$ Suppose $g$ is continuous. Then $g\circ\pi$ is a composition of continuous maps, hence is continuous. $(\Leftarrow)$ Suppose $g\circ\pi$ is continuous and let $U\subset Y$ be open. Then
+$$g^{-1}(U)=\{[x]\in X/{\sim}:g(x)\in U\}=\pi\big((g\circ\pi)^{-1}(U)\big)$$
+now $(g\circ\pi)^{-1}(U)=\pi^{-1}(g^{-1}(U))$ hence is an open set saturated with respect to $\pi$. Thus $g^{-1}(U)$ is the image under a quotient map of an open saturated set, hence is open.
+\end{proof}
+
+\begin{proposition}
+Let $X$ and $Y$ be topological spaces and $f:X\to Y$ a continuous surjective map. Let $\sim$ be the equivalence relation on $X$ given by $x\sim y$ whenever $x,y\in X$ and $f(x)=f(y)$, and let $\pi:X\to X/{\sim}$ be the quotient map. Then there exists a unique bijective continuous function $g:X/{\sim}\to Y$ such that $f=g\circ\pi$ and $g$ is a homeomorphism if and only if $f$ is a quotient map.
+\end{proposition}
+\begin{proof} First, let $g:X/{\sim}\to Y$ be the function $g([x])=f(x)$. By construction this is well defined, bijective, and satisfies $f=g\circ\pi$. By Proposition \ref{quotientuniversal}, $g$ is continuous since $f$ is.
+Suppose that $g$ is a homeomorphism and let $U\subset Y$. If $f^{-1}(U)$ is open then, since
+$$f^{-1}(U)=\pi^{-1}(g^{-1}(U))$$
+The set $f^{-1}(U)$ is open and saturated with respect to $\pi$, hence $\pi(f^{-1}(U))$ is open. Now, since $g$ is a homeomorphism, the set $g(\pi(f^{-1}(U)))$ is open. But since $g$ and $\pi$ are surjective,
+$$g(\pi(f^{-1}(U)))=(g\circ\pi)((g\circ\pi)^{-1}(U))=U$$
+hence $U$ is open, thus $f$ is a quotient map.\par
+Suppose now that $f$ is a quotient map. Since $g$ is bijective and continuous, it only remains to show that $g$ is open. Let $U\subset X/{\sim}$ be open. Now $g$ is a bijection, hence $U=g^{-1}(g(U))$ thus $$\pi^{-1}(U)=\pi^{-1}(g^{-1}(g(U)))=(g\circ\pi)^{-1}(g(U))=f^{-1}(g(U))$$
+so the open set $\pi^{-1}(U)$ is saturated with respect to $f$ and
+$$g(U)=\{f(x):[x]\in U\}=f(\pi^{-1}(U))$$
+which is open.
+\end{proof}
+
+\begin{remark}
+Notice that the preceding theorem is essentially an analog of the first isomorphism theorem for topological spaces.
+\end{remark}
+
+\iffalse
+\section{Exponentials}
+
+The following construction is considered more ``advanced'' than that of sums products and quotients. This is because the construction is somewhat difficult to grasp, and it only satisfies the desired universal property in good conditions, and even then, the universal property is itself a somewhat ``advanced'' topic. Additionally, the notion of function spaces corresponding to exponentiation is, strangely, relegated largely to the obscure realms of category theory. There is no need for this. I will not shy away from it.
+
+\begin{definition}
+    Let $X$ and $Y$ be sets. Define $Y^X:=\{f:X\to Y : f\text{ is a function}\}$.
+\end{definition}
+
+\begin{remark}
+    Exponentials between sets rather than numbers being captured by function spaces is perfectly natural. Suppose that $X$ and $Y$ are finite, with $|X|=m$ and $|Y|=n$. If $m=0$, there is exactly one function from $Y$ to $X$, namely the empty function, so $|Y^X|=1=|Y|^{|X|}$. Suppose that $|Y^X|=|Y|^{|X|}$ whenever $X$ has cardinality $m\in\N$. Suppose that $a\notin X$, and that $f\in Y^X$. For any element $b\in Y$, we can extend $f$ to a function $g:X\cup\{a\}\to Y$ by setting $g(a)=b$. Conversely, any function $g:X\cup\{a\}\to Y$ can be restricted to $X$, so that it arises in this way. Therefore, for every element $f\in Y^X$ and every element $b\in Y$, we obtain an element of $Y^{X\cup\{a\}}$, and there is no double counting. It follows that
+        $$|Y^{X\cup\{a\}}|=|Y|\times |Y^X|=|Y|\times |Y|^{|X|}=|Y|^{|X|+1}=|Y|^{|X\cup\{a\}|}.$$
+    Since every set of cardinality $m+1$ arises from adding a new element to a set of cardinality $m$, it follows by induction that $|Y^X|=|Y|^{|X|}$ for all finite sets $X$ and $Y$, and the proof demonstrated that each element of $X$ corresponds to a choice among $|Y|$ many options, and these choices are independent of eachother. This is exactly how exponential of natural numbers works. 
+\end{remark}
+
+The exponential of two sets gives rise to a natural function; whenever one has a function and an element of its domain, one can evaluate the function on the element and obtain an element of the codomain.
+
+\begin{definition}
+    Let $X$ and $Y$ be sets. The \textit{evaluation function} is the function $\ev:Y^X\times X\to Y$ defined by 
+        $$\ev(f, x)=f(x).$$
+\end{definition}
+
+We want to do a topological version of this, where the exponential is, rather than the \textit{set} of \textit{functions}, the \textit{space} of \textit{continuous functions}. We define now the exponential as a bare set.
+
+\begin{definition}
+    Let $(X, T)$ and $(Y, S)$ be topological spaces, and denote by $Y^X$ the set of continuous functions $f:X\to Y$.
+\end{definition}
+
+The difficulty now is that it is not clear what the topology on $Y^X$ ought to be. We want the evaluation function to be continuous, but this is a statement about the topology on $Y^X\times X$, not the topology on $Y^X$ itself. Additionally, we'd like this to be a direct generalisation; if $X$ and $Y$ are discrete spaces, we'd like their exponential to be discrete, so that we can use the exponential notation as for sets, and consider regular sets as the special case where the spaces are discrete.
+
+We can get the latter property above if we have a stronger property which is equally, if not more desirable: if $X$ is discrete, then we should have
+\begin{equation}\label{discrete exponential}
+    Y^X=\prod_{x\in X} Y.
+\end{equation}
+Indeed, recalling Definition \ref{product definition}, we defined products as sets of functions, whose codomain is a union, and which takes values in the appropriate factor spaces. Exponentials are sets of functions whose codomain is a union of just one space, and whose domain is now allowed to be a topological space, and we require that the functions be continuous. If this domain is discrete, every function is continuous, and we want to define our exponentials in such a way as to obtain a direct generalisation of products, and we have the equality of topological spaces \eqref{discrete exponential}. This moreover validates the exponential notations used in Example \ref{product examples}, in particular for the Hilbert cube $[0,1]^\N$.
+
+To arrive at the right definition, let's think through the implications of our requirements. Since $\ev$ is to be continuous, for each open set $U\subset Y$, the set
+    $$\ev^{-1}(U)=\{(f, x)\in Y^X\times X : f(x)\in U\}$$
+must be open in $Y^X\times X$. Since projections out of products are open, we get that
+    $$\pi_1(\ev^{-1}(U))=\{f\in Y^X : f(X)\cap U\neq\varnothing\}$$
+is open in $Y^X$.
+
+One approach might be to endow $Y^X\times X$ with the initial topology induced by $\ev$, and then give $Y^X$ the final topology induced by $\pi_1:Y^X\times X\to Y^X$, and hope that the product topology on $Y^X\times X$ obtained in this way is finer than the initial topology generated by $\ev$, so that $\ev$ is continuous.
+
+\fi
+
+\section{Metric Spaces}
+We give a brief rundown on a particularly nice class of topological spaces, which should be familiar.
+
+\begin{definition}
+Let $X$ be a set. A \textit{metric on $X$} is a function $d:X\times X\to\R$ such that
+\begin{enumerate}
+    \item $d(x,y)\geq 0$ for all $x,y\in X$,
+    \item $d(x,y)=0$ if and only if $x=y$, and
+    \item $d(x,z)\leq d(x,y)+d(y,z)$ for all $x,y,z\in X$.
+\end{enumerate}
+Condition (3) is known as the \textit{triangle inequality}. A set $X$ equipped with a metric $d$ is called a \textit{metric space}
+\end{definition}
+
+\begin{example}
+\begin{enumerate} Some well-known examples of metric spaces.
+    \item $\R^n$ equipped with the metric $d((x_1,\hdots,x_n),(y_1,\hdots,y_n))=\left(\sum_{i=1}^n(x_1-y_1)^2\right)^{1/2}$,
+    \item $\R^n$ equipped with the metric $d((x_1,\hdots,x_n),(y_1,\hdots,y_n))=\sum_{i=1}^n|x_1-y_1|$,
+    \item $\mathbb S^n\subset\R^{n+1}$equipped with the metric $d((x_1,\hdots,x_n),(y_1,\hdots,y_n))=\left(\sum_{i=1}^n(x_1-y_1)^2\right)^{1/2}$,
+    \item $\{0,1\}^n$ equipped with the metric $d((x_i),(y_i))=\sum_{i=1}^n |x_i-y_i|$,
+    \item Any normed linear space $(V,||.||)$ equipped with the metric $d(x,y)=||x-y||$.
+\end{enumerate}
+\end{example}
+
+\begin{definition}
+Let $(X,d)$ be a metric space, and let $\varepsilon>0$ and $x\in X$. Then the \textit{open ball of radius $\varepsilon$ centered at $x$} is the set
+$$B_\varepsilon(x,d):=\{y\in X:d(x,y)<\varepsilon\}$$
+if the metric $d$ is understood we write $B_\varepsilon(x)$ for $B_\varepsilon(x,d)$.
+\end{definition}
+
+\begin{definition}
+Let $(X,d)$ be a metric space. A subset $U\subset X$ is said to be \textit{open} in $(X,d)$ if, for all $x\in U$ there exists $\varepsilon>0$ such that $B_\varepsilon(x)\subset U$.
+\end{definition}
+
+The collection of open sets in $(X,d)$ gives a topology on $X$, denoted by $Td$, called the \textit{metric topology on $X$ induced by $d$}. Continuity with respect to the metric topology is equivalent to the usual notion of continuity with respect to the metric. This was proved in Theorem \ref{epsilondelta}.
+
+\begin{remark}
+Note that the collection $\{B_\varepsilon(x):x\in X,\:\varepsilon>0\}$ forms a basis for the metric topology.
+\end{remark}
+
+\begin{definition}
+Let $(X,d)$ be a metric space and $Y\subset X$ a set. The function $d|_{Y\times Y}$ is a metric on $Y$ (an easy check) and $(Y,d|_{Y\times Y})$ is said to be a \textit{submetric space} of $(X,d)$.
+\end{definition}
+
+\begin{proposition}
+Let $(X,d)$ be a metric space and $Y\subset X$. The metric topology on $Y$ induced by $d|_{Y\times Y}$ is the subspace topology on $Y$ induced by the metric topology on $X$.
+\end{proposition}
+\begin{proof}
+Let $U\subset Y$ be open in the subspace topology. Then $U=Y\cap V$ for some open set $V\subset X$. Let $x\in U$. Then, since $x\in V$, there exists $\varepsilon>0$ such that $B_\varepsilon(x,d)\subset V$. Now
+$$B_\varepsilon(x,d|_{Y\times Y})=\{y\in Y:d(x,y)<\varepsilon\}=B_\varepsilon(x,d)\cap Y\subset V\cap Y=U$$
+hence $U$ is open in the metric topology induced by $d|_{Y\times Y}$. Now, suppose $U\subset Y$ is open in the metric topology induced by $d|_{Y\times Y}$ and let $x\in U$. Then there exists $\varepsilon>0$ such that $B_\varepsilon(x,d|_{Y\times Y})\subset U$. But $B_\varepsilon(x,d|_{Y\times Y})=B_\varepsilon(x,d)\cap Y$ which is open in the subspace topology hence $U$ is open in the subspace topology.
+\end{proof}
+
+We return to another result mentioned in the introduction.
+
+\begin{theorem}
+\label{metricsbewild}
+Let $(X,d)$ be a metric space, $\varepsilon>0$, and let $f:[0,\infty)\to[0,\infty)$ be a subadditive\footnote{A function $f:S\to\R$, where $S\subset \R$, is \textit{subadditive} if, for all $x,y\in S$ such that $x+y\in S$, one has $f(x+y)\leq f(x)+f(x)$} monotone increasing function which is continuous and strictly increasing on $[0,\varepsilon)$ and for which $f(0)=0$. Let $d'=f\circ d$. Then $d'$ is a metric and $Td'=Td$.
+\end{theorem}
+\begin{proof}
+The only thing unclear about whether $d'$ is a metric is the triangle inequality. Let $x,y,z\in X$. Then
+\begin{align*}
+    d'(x,z)&=f(d(x,z))\\
+    &\leq f(d(x,y)+d(y,z))\\
+    &\leq f(d(x,y))+f(d(y,z))\\
+    &=d'(x,y)+d'(y,z)
+\end{align*}
+hence $d'$ is a metric. Let $U\in Td$ and $x\in U$. There exists $\delta>0$ such that $B_\delta(x,d)\subset U$. Let $M:=\sup\{f(x):x\in[0,\varepsilon)\}$. $f|_{[0,\varepsilon)}\to[0,M)$ is a bijection. Let $n\in\N$ be large enough that $\delta/n<M$. Then certainly $B_{\delta/n}(x,d)\subset U$. Let $\gamma:=(f|_{[0,\varepsilon)})^{-1}(\delta/n)$. Then $d(x,y)<\delta/n$ iff $f(d(x,y))<\gamma$ hence
+$$B_\gamma(x,d')=B_{\delta/n}(x,d)\subset U.$$
+hence $U\in Td'$. This process can be reversed to show that $Td'\subset Td$. Hence $Td'=Td$.
+\end{proof}
+
+\begin{definition}[Metrisability]$ $\\
+Let $(X,T)$ be a topological space. Then $(X,T)$ is said to be \textit{metrisable} if there exists a metric $d$ on $X$ such that the metric topology induced by $d$ is $T$.
+\end{definition}
+
+\begin{remark}
+By Theorem \ref{metricsbewild}, such a metric $d$ is unique only when $|X|=1$.
+\end{remark}
+
+\chapter{Separation and Countability Axioms}
+In general, topological spaces may not have many open sets. For instance, any nonempty set $X$ equipped with the indiscrete topology, by definition, has only two open sets. This means that, from a topological viewpoint, any two points in an indiscrete space are indistinguishable. To make sense of such pathologies, and to restrict our focus where appropriate to more well behaved topologies, we categorise spaces by which \textit{separation axioms} they satisfy. The separation axioms are a sequence of axioms labelled $T_n$ for some $n\in\N_0$ (sometimes $\Q$!) and for which $T_m\Rightarrow T_n$ whenever $m>n$.
+
+\section{Ts Zero through Two}
+
+\begin{definition}
+Let $X$ be a topological space. Then $X$ is said to be a \textbf{$T_0$-space} if it satisfies the \textbf{$T_0$-axiom}
+\begin{center}
+  \textit{For any pair of distinct points $x,y\in X$ there exists an\\ open set $U\subset X$ such that $|U\cap\{x,y\}|=1.$}
+\end{center}
+i.e., $U$ contains exactly one of $x$ and $y$.
+\end{definition}
+
+\begin{example}
+\label{sierpinskispace}
+Consider the set $\{0,1\}$ with the topology $\{\varnothing, \{0\},\{0,1\}\}$. This space is known as the \textit{Sierpinski} space, and is $T_0$.
+\end{example}
+
+\begin{remark}
+The $T_0$ axiom is... not very strong.
+\end{remark}
+
+For each separation axiom, it is clear that a disjoint union satisfies the axiom if and only if each space in the union does. It is true that a product of topological spaces is $T_0$ if and only if each of the spaces in the product is $T_0$. This is not true in general for every separation axiom.
+
+\begin{definition}
+Let $X$ be a topological space. Then $X$ is said to be a \textbf{$T_1$-space} or a \textit{Frechet space} if it satisfies the \textbf{$T_1$-axiom}
+\begin{center}
+    \textit{For any pair of distinct points $x,y\in X$, there exists\\ an open set $U\subset X$ such that $x\in U$ and $y\notin U$.}
+\end{center}
+\end{definition}
+
+Notice the subtle difference between the $T_0$-axiom and the $T_1$-axiom. Both state the existence of an open set ``separating'' $x$ and $y$, but the $T_1$-axiom is \textit{symmetric} in the sense that, while in a $T_0$ you may be able to find an open set containing $x$ and not $y$, it is not guaranteed that there is one containing $y$ and not $x$. This cannot happen in a $T_1$-space.
+
+Clearly the $T_1$-axiom implies the $T_0$-axiom. The converse, however, is not true. Consider the Sierpinski space of example \ref{sierpinskispace}. Any open set which contains the point 1 also contains the point 0, hence the Sierpinski space is not $T_1$.
+
+\begin{proposition}
+Let $X$ be a topological space. Then $X$ is a $T_1$-space if and only if, for each $x\in X$, the singleton $\{x\}$ is closed.
+\end{proposition}
+\begin{proof}
+$(\Rightarrow)$ Let $x\in X$, and let, for each $y\in X\setminus\{x\}$, $U_y$ be an open set containing $y$ and not $x$. Then
+$$X\setminus\{x\}=\bigcup_{\substack{y\in X\\y\neq x}}U_y$$
+which is open. $(\Leftarrow)$ Let $x,y\in X$, $x\neq y$. Then $X\setminus\{y\}$ is an open set containing $x$ and not $y$.
+\end{proof}
+
+Now we may easily give an example.
+
+\begin{example}
+\label{t1butnott2}
+Consider the set $\N$ (really, any countably infinite set will do) equipped with the cofinite topology. Then, if $x\in\N$, since the singleton $\{x\}$ is a finite set, it is closed. Hence this space is $T_1$.
+\end{example}
+
+It follows from Proposition \ref{closureproduct} that a product of spaces is $T_1$ if and only if each space in the product is $T_1$, since singletons will be closed in the product if and only if they are closed in the factors.
+
+\begin{definition}
+Let $X$ be a topological space. Then $X$ is said to be a \textbf{$T_2$-space} or a \textit{Hausdorff space} if $X$ satisfies the \textbf{$T_2$-axiom}
+\begin{center}
+    \textit{For any pair of distinct points $x,y\in X$, there exist disjoint\\open sets $U,V\subset X$ such that $x\in U$ and $y\in V$.}
+\end{center}
+\end{definition}
+
+\begin{example}
+Most of the topological spaces that one would normally consider are, in fact, Hausdorff spaces. Any space which is not Hausdorff is quite pathological, like for instance the affine space $k^n$ equipped with the Zariski topology, for any infinite field $k$. In fact, Hausdorff himself, when formulating the axioms of a topological space, initially included the $T_2$-axiom.
+\end{example}
+
+\begin{example}
+\label{t2butnotregular}
+The space $\R_K$. Let $K:=\{1/n:n\in\N\}$. Let $\R_K$ be the space $\R$ equipped with the topology generated by both the open intervals and the sets of the form $(a,b)\setminus K$ for $b>a$. Since $\R_K$ has a \textit{finer} topology than $\R$, it is Hausdorff.
+\end{example}
+
+The $T_2$-axiom easily implies the $T_1$-axiom, but again the converse doesn't hold. Example \ref{t1butnott2} provides a counter-example. Indeed, let $U,V\subset\N$ be any cofinite sets. Then $U\cap V$ is infinite, and in particular is nonempty.
+
+\begin{proposition}
+Let $\{X_\alpha\}_{\alpha\in A}$ be a family of topological spaces. Then the product $\prod_{\alpha\in A}X_\alpha$ is a Hausdorff space if and only if $X_\alpha$ is Hausdorff for each $\alpha\in A$.
+\end{proposition}
+\begin{proof}
+Suppose $X_\alpha$ is Hausdorff for every $\alpha\in A$ and let $x,y\in\prod_{\alpha\in A}X_\alpha$ be distinct. Then there exists $\alpha\in A$ such that $\pi_\alpha(x)\neq\pi_\alpha(y)$. Let $U,V\subset X_\alpha$ be disjoint open sets such that $\pi_\alpha(x)\in U$ and $\pi_\alpha(y)\in V$. Then $\pi_\alpha^{-1}(U)$ and $\pi^{-1}_\alpha(V)$ are disjoint open sets separating $x$ and $y$.
+
+Suppose that $\prod_{\alpha\in A}X_\alpha$ is Hausdorff. Let $\alpha\in A$ and let $x_\alpha,y_\alpha\in X_\alpha$ be distinct. Now, by the axiom of choice, the product
+$$P:=\prod_{\substack{\beta\in A\\\beta\neq\alpha}}X_\beta$$
+is nonempty, hence let $p\in P$. Let $x,y\in\prod_{\beta\in A}X_\beta$ be the elements given by $$x(\beta)=p(\beta)=y(\beta)$$ for all $\beta\neq\alpha$ and $x(\alpha)=x_\alpha$, $y(\alpha)=y_\alpha$. Recall that elements of a product are functions, so the preceding definition makes sense. Now, let $U,V\subset\prod_{\beta\in A}X_\beta$ be disjoint open sets such that $x\in U$ and $y\in V$. Then, since $\pi_\alpha$ is an open map, $\pi_\alpha(U)$ and $\pi_\alpha(V)$ are disjoint open sets separating $x_\alpha$ and $y_\alpha$.
+\end{proof}
+
+\begin{proposition}
+Let $X$ be a topological space, $Y$ a $T_2$-space, and let $f:X\to Y$ be a continuous map. Then if $f$ is injective, $X$ is Hausdorff.
+\end{proposition}
+\begin{proof}
+Let $x,y\in X$ be distinct. Then $f(x)$ and $f(y)$ are distinct points of $Y$. Let $U,V\subset Y$ be disjoint open sets in $Y$ such that $f(x)\in U$ and $f(y)\in V$. Then, by continuity, $f^{-1}(U)$ and $f^{-1}(V)$ are open sets in $X$. But $f^{-1}(U)$ and $f^{-1}(Y)$ are disjoint and $x\in f^{-1}(U)$ and $y\in f^{-1}(V)$.
+\end{proof}
+
+\begin{proposition}
+Let $X$ be a topological space, $Y$ a $T_2$-space, and let $f,g:X\to Y$ be continuous functions. Then the set $\{x\in X:f(x)=g(x)\}$ is closed.
+\end{proposition}
+\begin{proof}
+Let $x\in X$ and suppose that $f(x)\neq g(x)$. let $U,V\subset Y$ be disjoint open sets such that $f(x)\in U$ and $g(x)\in V$. Then $x\in f^{-1}(U)$ and $x\in f^{-1}(V)$ and, since $U$ and $V$ are disjoint, whenever $y\in f^{-1}(U)\cap g^{-1}(V)$, one has $f(y)\in U$ and $g(y)\in V$ so that $f(y)\neq g(y)$. Hence one has the open neighbourhood $f^{-1}(U)\cap g^{-1}(V)$ of $x$ contained in $X\setminus\{x\in X:f(x)=g(x)\}$.
+\end{proof}
+
+\begin{remark}
+In particular, by taking $X=Y$ and $g=\Id$ in the preceding theorem, one concludes that the set of \textit{fixed points} for any endomorphism\footnote{An endomorphism is a morphism (i.e., a continuous map in the case of topological spaces) from an object (topological space, in this case) to itself.} of a Hausdorff space must be closed.
+\end{remark}
+
+\section{Regularity and The Third T}
+\begin{definition}
+Let $X$ be a topological space. $X$ is said to be a \textit{regular space} if it satisfies the \textbf{axiom of regularity}\footnote{Actually, the term ``axiom of regularity'' is a set theory thing. No one uses this term like I have here. Don't copy me.}
+\begin{center}
+    \textit{For any closed set $C\subset X$ and any point $x\notin C$, there exist\\disjoint open sets $U,V\subset X$ such that $C\subset U$ and $x\in V$.}
+\end{center}
+\end{definition}
+
+Now, regular doesn't imply Hausdorff. This can be seen in the following example.
+
+\begin{example}
+Let $X=\{0,1\}$ and furnish $X$ with the indiscrete topology. Then if $C\subset X$ is closed and there exists $x\in X\setminus C$, then $C=\varnothing$ and the sets $\varnothing$ and $X$ are disjoint, open, and contain $C$ and $x$ respectively. Now, there is only one open set which contains $0$, namely $X$ itself. $X$ also contains $1$, hence $0$ and $1$ cannot be separated by disjoint open sets, thus $X$ is not Hausdorff.
+\end{example}
+
+Now since we want out $T_n$s to ascend in strength, we define $T_3$ to be a slight strengthening of regularity.
+
+\begin{definition}
+Let $X$ be a topological space. Then $X$ is said to be a \textbf{$T_3$-space} if it satisfies the \textbf{$T_3$-axiom}
+\begin{center}
+    \textit{$X$ is regular and $T_1$.}
+\end{center}
+\end{definition}
+
+\begin{proposition}
+Let $X$ be a $T_3$-space. Then $X$ is a $T_2$-space.
+\end{proposition}
+\begin{proof}
+Let $x,y\in X$ be distinct. Since $X$ is $T_1$, $\{x\}$ is closed. Since $X$ is regular, there exist disjoint open sets $U,V$ such that $\{x\}\subset U$ and $y\in V$.
+\end{proof}
+
+So $T_3$ implies $T_2$. The converse is, of course, false. Consider the space $\R_K$ of example \ref{t2butnotregular}. The set $K$ is closed, by construction, but there is no open set containing $K$ which does not contain 0, hence $\R_K$ can not be regular, though it is $T_1$.
+
+Now clearly the $T_3$-axiom could be replaced with ``regular and $T_2$'' without being made any stronger. More interestingly, it can be replaced with regular and $T_0$ without being made any \textit{weaker}. This gives us equivalences
+\begin{center} Regular and $T_0$ $\Leftrightarrow$ Regular and $T_1$ $\Leftrightarrow$ Regular and $T_2$
+\end{center}
+\begin{proposition}
+Let $X$ be a regular $T_0$ space. Then $X$ is $T_1$ and, hence, $T_3$.
+\end{proposition}
+\begin{proof}
+Let $x,y\in X$ be distinct and assume, without loss of generality, that there exists an open set $U\subset X$ such that $x\in U$ and $y\notin U$. Then $X\setminus U$ is a closed set not containing $y$, so by regularity there exist disjoint open sets $V,W\subset X$ such that $X\setminus U\subset V$ and $y\in W$. But then $W$ is an open set for which $y\in W$ and $x\notin W$, hence $X$ is $T_1$.
+\end{proof}
+
+A proof of the true fact that a product of regular spaces is regular may or may not be included later.
+
+\begin{example}
+\label{sorgenfreyplane}
+The Sorgenfrey line $\R_l$ (recall: $\R$ with the lower limit topology) is $T_3$. Hence so is its product with itself, the so-called \textit{Sorgenfrey plane} $\R^2_l$.
+\end{example}
+
+\begin{proposition}
+\label{regularinclusion}
+Let $X$ be a topological space. Then $X$ is regular if and only if, for each point $x\in X$ and each neighbourhood $N$ of $x$, there exists a closed neighbourhood $C\subset X$ of $x$ such that $C\subset N$. That is, the closed neighbourhoods of $x$ form a neighbourhood basis at $x$.
+\end{proposition}
+\begin{proof}
+$(\Rightarrow)$ Let $x\in X$ and let $N\subset X$ be a neighbourhood of $X$, containing an open neighbourhood $O$ of $x$. Then the set $X\setminus O$ is closed and doesn't contain $x$, hence there exist disjoint open sets $U,V\subset X$ such that $X\setminus O\subset U$ and $x\in V$. But then $X\setminus U$ is a closed set containing $V$, hence is a closed neighbourhood of $x$ and moreover is contained in $O$.
+
+$(\Leftarrow)$ Let $C\subset X$ be closed and $x\in X\setminus C$. The set $X\setminus C$ is an open neighbourhood of $x$. by hypothesis, $X\setminus C$ contains a closed neighbourhood $S$ of $x$, which contains an open neighbourhood $U\subset S$ of $x$. The sets $U$ and $X\setminus S$ are disjoint open sets with $C\subset X\setminus S$ and $x\in U$. Hence $X$ is normal.
+\end{proof}
+
+\begin{remark}
+One may also conclude easily from the preceding result that a space $X$ is regular if and only if, for every $x\in X$ and every open neighbourhood $U\subset X$ of $x$ there exists an open set $V\subset U$ such that
+$$x\in V\subset \overline V\subset U$$
+\end{remark}
+
+\section{Normality and T$_4$}
+\begin{definition}
+Let $X$ be a topological space. $X$ is said to be a \textbf{normal} space if
+\begin{center}
+    \textit{For each pair $C,D\subset X$ is disjoint closed sets there exist\\ disjoint open subsets $U,V\subset X$ such that $C\subset U$ and $D\subset V$.}
+\end{center}
+\end{definition}
+
+Let $X$ be the set $\R$ equipped with the topology generated by $\{(a,\infty):a\in\R\}$. Then there are no disjoint closet subsets, hence $X$ is vacuously normal. The set $(-\infty,0]$ is closed and $1\notin(-\infty,0]$, however the only open set containing $(-\infty,0]$ is the whole space $X$ so $X$ is nor regular. Hence normal is not stronger than regular, and in particular does not imply $T_3$. So again, we take a strengthening.
+
+\begin{definition}
+Let $X$ be a topological space. $X$ is said to be a \textbf{$T_4$-space} if $X$ satisfies the \textbf{$T_4$-axiom}
+\begin{center}
+    \textit{$X$ is normal and $T_1$}
+\end{center}
+\end{definition}
+
+Since singletons in a $T_1$ space are closed, $T_4$ easily implies regular, and hence $T_3$. The converse is, however, not true. Consider the space $\R_l^2$ of example \ref{sorgenfreyplane}. $\R_l^2$ is $T_3$ but not normal. The proof is omitted and can be found online. More interestingly, $\R_l$ is normal but $\R_l^2$ is not, so normality is not preserved by products. Moreover, since $\R_l$ is also $T_1$, it is $T_4$, but $\R_l^2$ is not normal, so products of $T_4$ spaces are not, in general, $T_4$. The proof is omitted.
+
+\begin{proposition}
+Let $X$ be a topological space. Then $X$ is normal if, for every pair $A,U\subset X$ os subsets of $X$ where $A$ is closed, $U$ is open and $A\subset U$, there exists an open set $V\subset X$ such that
+$$A\subset V\subset\overline V\subset U.$$
+\end{proposition}
+\begin{proof}
+The proof is the same as that of Proposition \ref{regularinclusion}, but with the point $x$ replaced with the set $A$.
+\end{proof}
+
+\subsection{Urysohn's Lemma and Tietze's Extension Theorem}
+We now look to two powerful characterizations of normality.
+
+\begin{definition}
+Let $X$ be a topological space and let $A,B\subset X$. The sets $A$ and $B$ are said to be \textit{completetly separated in $X$} if there exists a continuous function $f:X\to[0,1]$ such that $f(A)=\{0\}$ and $f(B)=\{1\}$. We say that the function $f$ \textit{completely separates} $A$ and $B$.
+\end{definition}
+
+\begin{definition}
+Let $X$ be a topological space. A \textit{Urysohn family in $X$} is a family $\{U_r\}_{r\in D}$ where $D\subset\R$ satisfying
+\begin{enumerate}
+    \item $\overline D=\R$,
+    \item $\bigcup_{r\in D}U_r=X$ and $\bigcap_{r\in D}U_r=\varnothing$, and
+    \item $\overline{U_r}\subset U_s$ for all $r,s\in D$ with $r<s$.
+\end{enumerate}
+\end{definition}
+\begin{remark}
+Observe that, since $U_r\subset\overline U_r$, one has $U_r\subset E_s$ whenever $r<s$.
+\end{remark}
+\begin{lemma}
+\label{urysohncont}
+Let $X$ be a topological space, $D\subset\R$ and let $\{U_r\}_{r\in D}$ be a Urysohn family in $X$. Define the function $\varphi:X\to\R$ by
+$$\varphi(x)=\inf\{r\in D:x\in U_r\}$$
+then $\varphi$ is continuous.
+\end{lemma}
+\begin{proof}
+First, note that, by property (2) of Urysohn families, the set $\{r\in D:x\in U_r\}$ is nonempty and bounded below for any $x\in X$. Let $a,b\in\R$ with $a<b$ and let $x\in\varphi^{-1}((a,b))$. Now $a<\varphi(x)<b$ hence there exist $r,s,t\in D$ with
+$$a<r<t<\varphi(x)<s<b$$
+then $\inf\{p\in D:x\in U_p\}<s$ hence there exists $p\in D$ with $p<s$ and $x\in U_p\subset U_s$ so that $x\in U_s$. Now since $r,t<\varphi(x)$, $x\notin U_t$ and $x\notin U_r$. Since $r<t$ and hence $\overline{U_r}\subset U_t$ it follows that $x\notin\overline{U_r}$. Hence the set
+$$U_s\setminus\overline{U_r}=U_s\cap(X\setminus\overline{U_r})$$
+is an open neighbourhood of $x$. But if $y\in U_s\setminus\overline{U_r}$ then $a<r\leq\varphi(y)\leq s<b$ so that $U_s\setminus\overline{U_r}\subset\varphi^{-1}((a,b))$ hence $\varphi^{-1}((a,b))$ is open. Since sets of the form $(a,b)$ form a basis for the topology on $\R$, we are done.
+\end{proof}
+
+\begin{lemma}
+\label{lemmaforurysohn}
+Let $X$ be a topological space and let $A,B\subset X$. Then $A$ and $B$ are completely separated in $X$ if and only if there exists a Urysohn family $\{U_r\}_{r\in D}$ such that $0,1\in D$, $A\subset U_0$ and $B\subset X\setminus U_1$.
+\end{lemma}
+\begin{proof}
+Suppose that $A$ and $B$ are completely separated, and let $f:X\to [0,1]$ be a continuous function such that $f(A)=\{0\}$ and $f(B)=\{1\}$. Let, for each $r\in\R$,
+$$U_r:=\left\{x\in X: f(x)<\frac{x+1}{2}\right\}$$
+We claim that $\{U_r\}_{r\in\R}$ is a Urysohn family of the desired form. First, certainly $\overline\R=\R$. Now
+$$U_2=\left\{x\in X:f(x)<\frac{3}{2}\right\}=X$$
+so that $\bigcup_{r\in\R}U_r=X$. Similarly, $U_{-1}=\varnothing$ so that $\bigcap_{r\in\R}U_r=\varnothing$. Let $r,s\in\R$ with $r<s$. Then
+\begin{align*}
+    \overline{U_r}&=\overline{f^{-1}\big((-\infty,(r+1)/2)\big)}\\
+      &\subset f^{-1}\big((-\infty,(r+1)/2]\big)\\
+      &\subset f^{-1}\big((-\infty,(s+1)/2)\big)=U_s
+\end{align*}
+by continuity. Hence $\{U_r\}_{r\in\R}$ is indeed a Urysohn family. Finally, 
+$$U_0=f^{-1}\big((-\infty,1/2)\big)\supset f^{-1}(\{0\})\supset A$$
+and $U_1=f^{-1}\big((-\infty,1)\big)$ but $B\subset f^{-1}(\{1\})$ hence $B\subset X\setminus U_1$.
+
+For the converse, suppose there exists such a Urysohn family $\{U_r\}_{r\in D}$. Let $\varphi:X\to[0,1]$ be as in Lemma \ref{urysohncont} and let $f:X\to[0,1]$ be the function defined by
+$$f(x)=\begin{cases}0 & \text{if }\varphi(x)\leq 0\\
+\varphi(x) &\text{if }0<\varphi(x)<1\\1 & \text{if }1\leq\varphi(x)\end{cases}$$
+now $X=\varphi^{-1}((-\infty,0])\cup\varphi^{-1}([0,1])\cup\varphi^{-1}([1,\infty))$ and $f$ restricted to any of these closed sets is continuous, hence $f$ is continuous by Theorem \ref{continuousonsubspaces}, and $f(A)=\{0\}$ and $f(B)=\{1\}$.
+\end{proof}
+
+We are now ready to prove Urysohn's lemma.
+
+\begin{theorem}[Urysohn's Lemma]$ $\\
+Let $X$ be a topological space. The $X$ is normal if and only if every pair of disjoint closed sets is completely separated in $X$.
+\end{theorem}
+\begin{proof}
+$(\Leftarrow)$ Let $A,B\subset X$ be disjoint closed subsets and let $f:X\to[0,1]$ be a continuous function such that $f(A)=\{0\}$ and $f(B)=\{1\}$. Then the sets
+$$f^{-1}\big([0,\tfrac{1}{2})\big)\qquad\text{and}\qquad f^{-1}\big((\tfrac{1}{2},0]\big)$$
+are disjoint, open, and contain $A$ and $B$ respectively. Hence $X$ is normal.
+
+$(\Rightarrow)$ Suppose $X$ is normal. Let $A,B\subset X$ be closed disjoint subsets. We define inductively an indexing set $D$ for a Urysohn family. Let $D_0:=\{0,1\}$, and for each $n>0$ let
+$$D_n:=\left\{\frac{m}{2^n}:m\in\N\text{ and }m\leq 2^n\right\}$$
+and let
+$$D:=(-\infty,0)\cup\bigcup_{n\in\N} D_n\cup (0,\infty)$$
+by the well known density of the dyadic rationals (see next chapter) one has $\overline D=\R$. Let $r\in D$. If $r<0$, set $U_r=\varnothing$. If $r>1$, set $U_r=X$. Using induction on $n$ we define $U_r$ for each $r\in D_n$. For the case $n=0$, one has, by normality, open sets $U_0$ and $U_1$ such that
+$$A\subset U_0\subset\overline {U_0}\subset U_1\subset\overline{U_1}\subset X\setminus B$$
+Now, let $n>0$. Take any $t\in D_{n+1}\setminus D_n$ and set 
+$$r=\max(D_n\cap [0,r))\quad\text{and}\quad s=\min(D_n\cap (t,1])$$
+then, by normality, there exists an open set $U_t$ such that
+$$\overline {U_r}\subset U_t\subset\overline{U_t}\subset U_s$$
+this defines a family $\{U_r\}_{r\in D}$ which is readily seen to give a Urysohn family satisfying the requirements of Lemma \ref{lemmaforurysohn}, hence $A$ and $B$ are completely separated.
+\end{proof}
+
+Having proved Urysohn's lemma, we turn to Tietze's extension theorem. First, we need a lemma.
+
+\begin{lemma}
+Let $X$ be a normal topological space, $C\subset X$ a closed subset, $f:C\to\R$ a bounded continuous function and let $M>0$ be such that $|f(x)|<M$ for all $x\in C$. Then there exists a continuous function $g:X\to\R$ such that $|g(x)|\leq\tfrac{1}{3}M$ for all $x\in X$ and $|f(x)-g(x)|\leq \tfrac{2}{3}M$ for all $x\in C$.
+\end{lemma}
+\begin{proof}
+The sets $C^+:=f^{-1}([\tfrac{1}{3}M,\infty))$ and $C^-:=f^{-1}((\infty,-\tfrac{1}{3}M])$ are disjoint closed subsets of $C$, hence in $X$, and by Urysohn's lemma are completely separated by some function $f$. Let $g:X\to[-\tfrac{1}{3}M,\tfrac{1}{3}M]$ be the function $$g(x)=\frac{2M}{3}\left(f(x)-\frac{1}{2}\right)$$
+
+then $g(C^+)=\{\tfrac{1}{3}M\}$ and $g(C^-)=\{-\tfrac{1}{3}M\}$. Now $|g(x)|\leq \tfrac{1}{3}M$ for all $x\in X$ by construction. Let $x\in C$. One has three cases.
+\begin{enumerate}
+    \item $x\in C^+$. Then $f(x),g(x)\in[M,\tfrac{1}{3}M]$,
+    \item $x\in C^-$. Then $f(x),g(x)\in[M,\tfrac{1}{3}M]$,
+    \item $x\notin C^+\cup C^-$. Then $f(x),g(x)\in[-\tfrac{1}{3}M,\tfrac{1}{3}M]$.
+\end{enumerate}
+Hence, in each case, $|f(x)-g(x)|\leq \tfrac{2}{3}M$.
+\end{proof}
+
+\begin{theorem}[Tietze's Extension Theorem]$ $\\
+Let $X$ be a topological space. Then $X$ is normal if and only if for every closed subset $C\in X$ of $X$ and every bounded continuous function $f:C\to\R$ 
+admits a continuous a bounded continuous extension $\hat f:X\to\R$.
+\end{theorem}
+\begin{proof}
+$(\Rightarrow)$ Suppose $X$ is normal and let $C\subset X$ be closed and $f:C\to\R$ continuous and bounded. Let $M>0$ be such that $|f(x)|\leq M$ for all $x\in C$. We define a sequence of functions $g_n:X\to\R$ inductively. First, let $g_1$ be, as in the lemma, a function such that
+\begin{align*}
+    |g_1(x)|&\leq \frac{1}{3}M\text{ for all }x\in X,\text{ and}\\
+    |f(x)-g_1(x)|&\leq \frac{2}{3}M\text{ for all }x\in C.
+\end{align*}
+and then, if $n\in\N$, let $g_{n+1}:X\to\R$ be a function such that
+\begin{align*}
+    |g_{n+1}(x)|&\leq \frac{1}{3}\left(\frac{2}{3}\right)^{n}M\text{ for all }x\in X,\text{ and}\\
+    \left|f(x)-\sum_{i=1}^ng_i(x)\right|&\leq\left(\frac{2}{3}\right)^{n+1}M\text{ for all }x\in C.
+\end{align*}
+Let $\hat f:X\to\R$ be the function $\sum_{n=1}^\infty g_n$. To see that $\hat f$ is bounded and continuous, observe that
+$$\sum_{n=1}^\infty \frac{1}{3}\left(\frac{2}{3}\right)^{n-1}M=\frac{M}{3}\sum_{n=1}^\infty\left(\frac{2}{3}\right)^{n-1}=M$$
+since the terms of this sum are upper bounds for the absolute value of the $g_n$, $\hat f$ is bounded and, by the \textit{Weierstrass $M$-test}, $\sum_{n=1}^\infty g_n$ converges uniformly, hence $\hat f$ is continuous.
+
+Finally, to see that $\hat f$ is an extension of $f$, let $x\in C,n\in\N$ and observe that
+$$\left|f(x)-\sum_{i=1}^n g_i(x)\right|\leq \left(\frac{2}{3}\right)^n.$$
+
+$(\Leftarrow)$ For the converse, let $A,B\subset X$ be disjoint closed sets and define $f:A\cup B\to\R$ by
+$$f(x)=\begin{cases}0 & \text{if }x\in A\\ 1 & \text{if }x\in B\end{cases}$$
+then $f$ is continuous and bounded. Let $\hat f:X\to\R$ be a continuous bounded extension of $f$. Then the sets
+$$f^{-1}((-\infty,\tfrac{1}{2}))\quad\text{and}\quad f^{-1}((\tfrac{1}{2},\infty))$$
+are disjoint open subsets of $X$ containing $A$ and $B$ respectively. Hence $X$ is normal.
+\end{proof}
+
+\section{Complete Regularity and $T_{3\tfrac{1}{2}}$}
+Now we move down the ladder of $T$s by one half and discuss the axiom $T_{3\tfrac{1}{2}}$ ($T$ three-and-a-half). This axiom is best discussed after normality and $T_4$ for reasons that will become apparent.
+
+\begin{definition}
+Let $X$ be a topological space. Then $X$ is said to be \textit{completely regular} if
+\begin{center}
+    \textit{For every closed set $C\subset X$ and each $x\in X\setminus C$ there exists a continuous\\ function $f:X\to[0,1]$ such that $f(x)=0$ and $f(C)=\{1\}$.}
+\end{center}
+\end{definition}
+
+
+\begin{definition}
+Let $X$ be a topological space. $X$ is said to be a \textbf{$T_{3\tfrac{1}{2}}$-space} or a \textit{Tychonoff space} if
+\begin{center}
+    \textit{$X$ is completely regular and $T_1$.}
+\end{center}
+\end{definition}
+
+\begin{example}
+The interval $[0,1]$ is Tychonoff.
+\end{example}
+
+It is relatively straightforward to check that products and subspaces of Tychonoff spaces are Tychonoff. We now give a powerful characterisation of Tychonoff spaces.
+
+\begin{theorem}[Tychonoff's Embedding Theorem]$ $\\
+Let $X$ be a topological space. Then $X$ is a Tychonoff space iff there exists a set $A$ such that there exists an embedding $i:X\to\prod_{\alpha\in A}[0,1]$.
+\end{theorem}
+\begin{proof}
+$(\Leftarrow)$ Suppose such a set $A$ and function $i$ exist. Then $X\cong i(X)$, but $i(X)$ is a subspace of the Tychonoff space $\prod_{\alpha\in A}[0,1]$, hence $X$ is Tychonoff.
+
+$(\Rightarrow)$ Suppose $X$ is Tychonoff and let $A:=\hom(X,[0,1])$ be the set of continuous maps $X\to[0,1]$. Let $i:X\to\prod_{\alpha\in A}[0,1]$ be defined by
+$$(i(x))(\alpha)=\alpha(x),$$
+recalling that elements of the product $\prod_{\alpha\in A}[0,1]$ are functions $f:A\to[0,1]$. Now, it remains to see that $i$ is an embedding. First, if $\alpha\in A$ and $x\in X$, then
+$$(\pi_\alpha\circ i)(x)=(i(x))(\alpha)=\alpha(x)$$
+hence $\pi_\alpha\circ i=\alpha$, which is continuous, hence $i$ is continuous.
+
+To see that $i$ is injective, let $x,y\in X$ be distinct. Then,  since $X$ is completely regular, there exists a continuous function $f:X\to[0,1]$ such that $f(\{x\})=\{1\}$ and $f(y)=0$. Then $i(x)(f)\neq i(y)(f)$ so that $i(x)\neq i(y)$ hence $i$ is injective.
+
+Finally, let $U\subset X$ be open and let $x\in U$. There exists a function $f:X\to[0,1]$ (i.e., $f\in A$) such that $f(X\setminus U)=\{1\}$ and $f(x)=0$. Let $V:=\pi_f^{-1}([0,1))$. Then $V$ is open. The set $V\cap i(X)$ is open in $i(X)$ and $i(x)\in V$ since $\pi_f(i(x))=f(x)=0$. Let $z=i(y)\in V\cap i(X)$. Then $f(y)\in[0,1)$ hence $y\in X\setminus U$, thus $z\in i(U)$. Therefore $i(U)$ contains the open neighbourhood $V\cap i(X)$ of $x$, hence $i(U)$ is open. Thus $i$ is an embedding.
+\end{proof}
+
+\section{Separability}
+Having covered the most common separation axioms, we look to separability. Separability is oddly named, as it has basically nothing to do with the separation of points, and is instead a statement about the \textit{size} of topological spaces.
+
+\begin{definition}
+Let $X$ be a topological space. Then $X$ is said to be \textit{separable} if $X$ has a dense countable subset. If $X$ is non separable, we say that it is \textit{inseparable}.
+\end{definition}
+
+\begin{example}
+The dense subset $\Q\subset\R$ is countable hence $\R$ is separable. Similarly, $\Q^n\subset\R^n$ is dense and countable, hence $\R^n$ is separable for all $n\in\N$.
+\end{example}
+
+Separability, in a certain sense, provides a limit to the ``size'' of the space $X$. This is best illustrated by an example and a proposition.
+
+\begin{example}
+\label{closedlongray}
+Let $\omega_1$ be the first uncountable ordinal and let $L:=[0,1)\times\omega_1$. Define an order on $L$ by $(x,\alpha)\leq(y,\beta)$ whenever $\alpha<\beta$ or $\alpha=\beta$ and $x\leq y$. Give $L$ the \textit{order topology}; the topology generated by the sets
+$$(a,\infty):=\{x\in L:a<x\}$$
+and
+$$(\infty,b):=\{x\in L:x<b\}$$
+for any $a,b\in L$. Then $L$, called the \textit{closed long ray}, ``looks like'' uncountably many copies of $[0,1)$ ``glued together'' end-to-end. Where $\R$ has, in a sense, countable length (more precisely, $\R$ is a $\sigma$-finite measure space), $L$ has \textit{uncountable length}. Any dense subset must contain an element of each of the disjoint subsets $[0,1)\times\alpha$, $\alpha\in\omega_1$, of which there are uncountably many. Hence $L$ is inseparable.
+\end{example}
+
+\begin{proposition}
+\label{metricspaceseparability}
+Let $(X,d)$ be a metric space. Then $X$ is separable if and only if, for all $\varepsilon>0$, there does not exist an uncountable set $S\subset X$ such that $d(x,y)>\varepsilon$ for all distinct $x,y\in D$.
+\end{proposition}
+\begin{proof}
+Omitted.
+\end{proof}
+
+\begin{remark}
+The closed long ray $L$ is not metrisable, so Proposition \ref{metricspaceseparability} cannot be used to show that $L$ is inseparable.
+\end{remark}
+
+\begin{remark}
+Although separability places a restriction on the ``topological size'' of a space, it says nothing about the \textit{cardinality} of the underlying set. For a striking and trivial example, take any set $X$ of any cardinality and endow $X$ with the indiscrete topology. Then $\overline{\{x\}}=X$ for any point $x\in X$ hence $X$ is separable. More restrictions are required to place an upper bound on cardinality - for instance, every first countable separable Hausdorff space has cardinality at most $\mathfrak{c}$.
+\end{remark}
+
+\section{Countability}
+\subsection{First Countability}
+\begin{definition}
+Let $X$ be a topological space. Then $X$ is said to be \textit{first countable} if $X$ satisfies the \textbf{first axiom of countability}
+\begin{center}
+    \textit{For every $x\in X$ there exists a countable neighbourhood basis at $x$}
+\end{center}
+\end{definition}
+
+\begin{example}
+Any metric space is first countable. Indeed, let $(X,d)$ be a metric space. Then, if $x\in X$, $\{B_{1/n}(x):n\in\N\}$ forms a countable neighbourhood basis. The converse does not hold; this will be shown in the section on second countability.
+\end{example}
+
+If a space is first countable, then its topology is wholly determined by its convergent sequences. This statement will be made precise in the chapter on convergence.
+
+\subsection{Second Countability}
+\begin{definition}
+Let $X$ be a topological space. Then $X$ is said to be \textit{second countable} if $X$ satisfies the \textbf{second axiom of countability}
+\begin{center}
+    \textit{There exists a countable basis for the topology on $X$}
+\end{center}
+\end{definition}
+
+\begin{example}
+\label{Rsecondcountable}
+The real line is second countable. The set
+$$\{(p-\varepsilon,p+\varepsilon):\varepsilon, p\in\Q,\varepsilon>0\}$$
+forms a countable basis for the topology on $\R$.
+\end{example}
+
+\begin{proposition}
+Let $X$ be a second countable space. Then $X$ is separable and first countable.
+\end{proposition}
+\begin{proof}
+Let $B$ be a countable basis for the topology on $X$. Choose\footnote{Yes, using choice. Well, countable choice is all that is needed in this case.} an element $x_U$ for all $U\in B$. Since $B$ is a basis and $\{x_U:U\in B\}$ intersects $U$ for all $U\in B$, it is a dense subset and is countable since $B$ is. Hence $X$ is separable. Now let $x\in X$ and let $x\in X$. The the set $U_x:=\{U\in B:x\in U\}$ forms a countable neighbourhood basis at $x$ hence $X$ is first countable.
+\end{proof}
+
+The technique used to show that $\R$ is second countable in Example \ref{Rsecondcountable} generalises easily to all separable metric spaces.
+
+\begin{proposition}
+\label{separablemetricsecondcountable}
+Let $(X,d)$ be a separable metric space. Then $X$ is second countable.
+\end{proposition}
+\begin{proof}
+Let $\{x_n:n\in\N\}$ be a countable dense subset of $X$. Let $B:=\{B_{1/n}(x_m):m,n\in\N\}$. Then $B$ is countable. If $U\in\langle B\rangle$ then $U$ is clearly open with respect to the metric $d$. Let $V\subset X$ be open with respect to $d$. If $x\in V$ then there exists $n\in\N$ such that $B_{1/n}(x)\subset V$. Since $\{x_m:m\in\N\}$ is dense, there is $m\in\N$ such that $x_m\in B_{1/2n}(x)$. Then $B_{1/2n}(x_n)$ is an open neighbourhood of $x$ contained in $V$, hence $V\in\langle B\rangle$. Thus $B$ generates the same topology as the metric $d$. Finally, to see that $B$ is indeed a basis for $\langle B\rangle$, let $n,m,p,q\in\N$ and suppose that $S:=B_{1/n}(x_m)\cap B_{1/p}(x_q)\neq\varnothing$. Since $S$ is open, there exists $l\in\N$ such that $x_l\in S$ and $k\in\N$ such that $B_{1/k}(x_l)\subset S$. Hence by Proposition \ref{basechar}, $B$ is a basis for $\langle B\rangle$.
+\end{proof}
+
+This allows us to prove that first countable does not imply metrisable;
+\begin{proposition}
+The Sorgenfrey line $\R_l$ is first countable and separable but nonmetrisable.
+\end{proposition}
+\begin{proof}
+For any $x\in\R_l$, a countable neighbourhood base at $x$ is provided by $\{[x, x+1/n):n\in\N\}$. Moreover $\Q$ is clearly dense in $\R_l$. Suppose that $B$ is a basis for the lower limit topology. Then, for each $x\in\R_l$, $x$ has an open neighbourhood $B\ni B_x\subset [x,x+1)$. If $x<y\in\R_l$ then $x\notin B_y$ hence one has an injective map $\R\mapsto B$ given by $x\mapsto B_x$ so that $B$ has at least continuum cardinality. Since $\R_l$ is separable but not second countable, $\R_l$ cannot be metrisable by Proposition \ref{separablemetricsecondcountable}.
+\end{proof}
+
+
+\begin{proposition}
+Let $\{X_n\}_{n\in\omega}$ be a countable family of topological spaces. Then
+\begin{enumerate}
+    \item If $X_n$ is separable for all $n\in\omega$ then $\prod_{n\in\omega}X_n$ is separable.
+    \item If $X_n$ is first countable for all $n\in\omega$, then $\prod_{n\in\omega}X_n$ is first countable.
+    \item If $X_n$ is second countable for all $n\in\omega$, then $\prod_{n\in\omega}X_n$ is second countable.
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+Not too hard.
+\end{proof}
+
+\chapter{Convergence}
+In the introduction, topology was characterised as the study of continuity. Another train of thought is to think of topology as the study of convergence. Indeed, this can be made precise. But we will need to develop some notions of convergence to see this. The first notion of convergence that one meets is convergence of sequences.
+
+\section{Sequences}
+\begin{definition}
+Let $X$ be a set. Then a \textit{sequence $(x_n)_{n\in\N}$ in $X$} is a function $\N\to X$.
+\end{definition}
+
+\begin{definition}
+Let $X$ be a topological space and $(x_n)_{n\in\N}$ a sequence in $X$. A point $x\in X$ is a \textit{limit for $(x_n)_{n\in\N}$} if for every neighbourhood $N\subset X$ of $x$ there exists some $M\in\N$ such that $x_n\in N$ for all $n\geq M$.
+\end{definition}
+
+Topological spaces, in general, are not nice enough for sequences to be particularly well behaved. Indeed, if $X$ is indiscrete, then any point in $X$ is a limit for any sequence in $X$. One requires additional assumptions about $X$.
+
+\begin{proposition}
+Let $X$ be a Hausdorff space and $(x_n)$ be a sequence in $X$. Then $(x_n)$ has at most one limit in $X$.
+\end{proposition}
+\begin{proof}
+Suppose that $x$ and $y$ are limits for $x_n$. If $x$ and $y$ are distinct then there exist disjoint open sets $U,V\subset X$ such that $x\in U$ and $y\in V$. But then one has $M_x\in\N$ and $M_y\in\N$ such that, if $n\geq\ M_x$ then $x_n\in U$ and if $n\geq M_y$ then $x_n\in V$. If $n\geq\max\{M_x,M_y\}$ one has the contradiction $x_n\in U\cap V=\varnothing$. Hence $x=y$.
+\end{proof}
+
+The following proposition is one direction of a well-enjoyed characterisation of continuity in terms of limits of sequences. Unfortunately, only one direction holds in full generality.
+
+\begin{proposition}
+Let $X$ be a topological space, $A\subset X$ and $x\in X$. If there exists a sequence $(x_n)$ converging to $x$ in $A$, then $x\in \overline A$.
+\end{proposition}
+\begin{proof}
+Suppose that there is a sequence $(x_n)$ in $A$ for which $x$ is a limit. If $U\subset X$ is an open neighbourhood of $x$ then there exists $N\in\N$ such that $x_n\in U$ whenever $n\geq N$, hence in particular $x_n\in A\cap U$. Thus $x\in\overline A$.
+\end{proof}
+
+The converse holds with the additional assumption of first countability, which is implied by but strictly weaker than metrisability.
+
+\begin{proposition}
+Let $X$ be a topological space, $A\subset X$ and $x\in \overline A$. If $x$ has a countable neighbourhood base, there exists a sequence $(x_n)$ in $A$ converging to $x$.
+\end{proposition}
+\begin{proof}
+Let $\{N_n\}_{n\in\omega}$ be a countable neighbourhood basis at $x$. For each $n\in\N$, let $x_n\in A\cap\bigcap_{i=1}^n N_n$. Let $N$ be a neighbourhood of $x$. There exists some $M\in\omega$ such that $N_M\subset N$, by the definition of a neighbourhood basis. Hence if $n\geq M$, then $x_n\in N$. Hence $x$ is a limit for $x_n$.
+\end{proof}
+\begin{corollary}\label{first countability sequence result}
+Let $X$ be a first countable topological space, $A\subset X$ and $x\in X$. Then $x\in\overline A$ if and only if there exists a sequence $(x_n)$ in $A$ converging to $x$.
+\end{corollary}
+
+\begin{remark}\label{first countable spaces determined by sequences}
+    Corollary \ref{first countability sequence result} above is deceivingly powerful. Suppose that $X$ is a topological space, but the topology is not known. What is known, however, is the set of all convergent sequences in $X$, and the limits thereof. Then, one can determine exactly what the closed sets of $X$ are, since if $A\subset X$, then $\overline A$ is the set of limits of sequences in $A$, and $A$ is closed if and only if $\overline A=A$. Knowing the closed sets of a topological space determines the topology, since the open sets can then be recovered by taking complements.
+
+    This result is highly useful, as a deceivingly large proportion of topological spaces encountered in daily life are first countable, and so in many cases one can get by thinking in terms of sequences alone.
+\end{remark}
+
+\begin{remark}
+Note that, since metric spaces are first countable, the preceding characterization of the closure of a set applies for metric spaces.
+\end{remark}
+
+Now we see how limits of sequences relate to continuity.
+\begin{proposition}
+Let $X$ and $Y$ be topological spaces and $f:X\to Y$ a continuous map. Let $(x_n)$ be a sequence in $X$. Then if $(x_n)$ converges to $x$, $(f(x_n))$ converges to $f(x)$.
+\end{proposition}
+\begin{proof}
+Let $U\subset Y$ be a neighbourhood of $f(x)$. Then $f^{-1}(U)$ is a nieghborhood of $x$, hence contains all but finitely many of the $x_n$. Thus all but finitely many of the $f(x_n)$ are in $U$, hence $(f(x_n))$ converges to $f(x)$.
+\end{proof}
+
+\begin{proposition}
+Let $X$ and $Y$ topological spaces and $f:X\to Y$ a function. Let $x\in X$ and suppose that $x$ has a countable neighbourhood base. Then $f$ is continuous at $x$ if and only if, for every sequence $(x_n)$ in $X$ converging to $x$, $(f(x_n))$ is a sequence in $Y$ converging to $f(x)$.
+\end{proposition}
+\begin{proof}
+The forward implication holds in the more general case above. For the converse, let $U\subset Y$ be a neighbourhood of $f(x)$, and let $\{U_n:n\in\N\}$ be a countable neighbourhood basis at $x$ and assume, without loss of generality, that $U_1\supset U_2\supset\hdots$. Suppose that $f$ is not continuous at $x$. Then there exists a neighbourhood $V$ of $f(x)$ such that, for all $n\in\N$, $f(U_n)\not\subset V$. Let, for each $n\in\N$, $x_n\in f(U_n)\setminus V$. Then $(x_n)\to x$ but $(f(x_n))\not\to f(x)$.
+\end{proof}
+\begin{corollary}
+Suppose that $X$ is first countable. Then $f:X\to Y$ is continuous if and only if, for all $x\in X$ and all sequences $(x_n)$ converging to $x$, then $f(x_n)$ converges to $f(x)$ in $Y$.
+\end{corollary}
+
+In order to deal with more general spaces, such as the plethora of non-first-countable spaces encountered in the study of topological vector spaces, we will need a more powerful tool to take the place of sequences. Fortunately, there is one, and it such a mild generalisation that often classical results proven in metric or first countable spaces using sequences can be generalised with no effort simply by swapping a word or two here and there.
+
+\section{Nets}
+\begin{definition}
+Let $P$ be a poset. Then $P$ is said to be a \textit{directed set} or simply \textit{directed} if, for all $x,y\in P$, there exists $z\in P$ such that $x\leq z$ and $y\leq z$.
+\end{definition}
+
+The natural numbers form a directed set; if $m,n\in\N$ then $\max\{n,m\}$ exceeds both $n$ and $m$. Perhaps more important, however, is the following example.
+
+\begin{example}
+Let $X$ be a topological space and $x\in X$. Then the set $N(x)$ of open neighbourhoods of $x$ in $X$, ordered by the opposite relation to inclusion (i.e., $U\leq V$ iff $V\subset U$), forms a directed set. This follows since the intersection of two neighbourhoods $U$ and $V$ of $x$ is again a neighbourhood of $x$, and exceeds both $U$ and $V$.
+\end{example}
+
+\begin{definition}
+Let $X$ be a set. Then a \textit{net in $X$} is a function $x:D\to X$ where $D$ is a directed set. As with sequences, the input to the function is often denotes by a subscript, i.e., $x_{d}:=x(d)$ is $d\in D$ and refer to the net via $(x_d)_{d\in D}$.
+\end{definition}
+
+In light of this definition, it is clear that nets are an immediate generalisation of sequences; sequences are simply the case $D=\N$.
+
+\begin{definition}
+Let $X$ be a topological space, $(x_d)_{d\in D}$ a net and $x\in X$. Then the net $(x_d)_{d\in D}$ is said to \textit{converge to $x$} if, for every open neighbourhood $N$ of $x$, there exists $d\in D$ such that, for all $b\in D$, if $d\leq b$ then $x_b\in N$.
+\end{definition}
+
+Note how, again, this is a direct generalisation of convergences of sequences. Now, the results which fail when moving from metric spaces to topological spaces are restored by replacing sequences with nets. The most striking example of this is the following.
+
+\begin{theorem}\label{nets determine continuity}
+Let $X$ and $Y$ be topological spaces and $f:X\to Y$ a function. Then $f$ is continuous if and only if, for every convergent net $x:D\to X$, the net $d\mapsto f(x_d)$ converges to $f(\lim x)$.
+\end{theorem}
+\begin{proof}
+Suppose than $f$ is continuous, let $D$ be a directed set and $x:D\to X$ a net in $X$. Let $N\subset Y$ be an open neighbourhood of $f(\lim x)$. Then $f^{-1}(N)$ is an open neighbourhood of $\lim_{d\in D}x_d$, hence $x$ is eventually in $f^{-1}(N)$. But since $f(f^{-1}(N))\subset N$, it follows that $f\circ x$ is eventually in $N$.
+
+Let $x_0\in X$ and suppose that $f$ is not continuous at $x_0$. Then there exists a neighbourhood $V$ of $f(x_0)$ such that for, for all open sets $U\in \neigh{x_0}$, $f(U)\not\subset V$. Therefore, by the axiom of choice, there is a function $x:\neigh{x_0}\to X$ such that $x_U\in U\setminus V$ for each $U\in\neigh{x}$. But then $x$ is a net and, by construction, $x\to x_0$ but $(f\circ x)\not\to f(x_0)$.
+\end{proof}
+
+So nets determine which functions are continuous. But a topology is determined by its continuous functions, hence a topology is determined by its convergent nets (and their respective limits). More specifically, we have the following.
+
+\begin{theorem}
+    Let $X$ be a set and let $T_1$ and $T_2$ be two topologies on $X$. Then $T_1=T_2$ if and only if, for each directed set $D$, each net $x:D\to X$ and each point $x_0\in X$, one has $\lim x=x_0$ with respect to $T_1$ if and only if $\lim x=x_0$ with respect to $T_2$.
+\end{theorem}
+\begin{proof}
+    The forward direction is trivial. For the converse, consider the identity function $\Id_X$ on $X$. A set $A\subset X$ is precisely its own inverse image under $\Id_X$, hence if $\Id_X:(X,T_i)\to (X,T_j)$ is continuous, $T_j\subset T_i$, and so if this is true regardless the choice of $i,j\in\{1,2\}$, then $T_1=T_2$. But by Theorem \ref{nets determine continuity}, the statement ``$\Id_X:(X,T_i)\to (X,T_j)$ is continuous'' is logically equivalent to the statement ``for each directed set $D$, each net $x:D\to X$ and each point $x_0\in X$, if $\lim x=x_0$ with respect to $T_i$ then $\lim x=x_0$ with respect to $T_j$''. 
+\end{proof}
+
+
+
+Another way of seeing this is the following result.
+\begin{proposition}
+Let $X$ be a topological space, $A\subset X$ and $x_0\in X$. Then $x_0\in \overline A$ if and only if there is a net $x:D\to A$ converging to $x_0$.
+\end{proposition}
+\begin{proof}
+Suppose first that $x_0\in\overline A$. If $x_0\in A$ then the net $x:\{0\}\to A$ given by $x(0)=x_0$ converges to $x_0$. If $x_0\in\overline A\setminus A$, then $x_0$ is a boundary point of $A$, hence every neighbourhood of $x_0$ intersects $A$. Thus one has a net $x:\neigh{x}\to A$ converging to $x_0$ given by choosing, for each $U\in \neigh{x}$, a point of $U\cap A$.
+
+Suppose now there exists a net $x:D\to A$ converging to $x_0$. Let $N\subset X$ be a neighbourhood of $x_0$. Then $x$ is eventually in $N$, so that $\varnothing\neq x(D)\cap N\subset A\cap N$. Since $N$ was arbitrary, every neighbourhood of $x_0$ intersects $A$, hence $x_0\in\overline A$.
+\end{proof}
+
+
+
+\section{Filters}
+Every time that convergence is mentioned, there is inevitable mention of the set $\neigh{x}$ of open neighbourhoods of a point $x$ where some sequence or net is meant to converge to. This relationships between convergence and the sets of neighbourhoods of points is fundamental: it is illustrated in the following.
+
+\begin{definition}
+Let $(X,T)$ be a topological space and $x:D\to X$ a net in $X$. Define the \textit{filter generated by $x$} to be the set $\filt{\{x_d\}_{d\in D}}$ of those open sets $U$ such that $x$ is eventually in $U$.
+\end{definition}
+\begin{proposition}
+\label{netfilterconvergence}
+Let $X$ be a topological space, $x:D\to X$ a filter in $X$ and $x_0\in X$. Then $x\to x_0$ if and only if $\neigh{x}\subset \filt{\{x_d\}_{d\in D}}$.
+\end{proposition}
+\begin{proof}
+Inspecting the definition of $\filt{\{x_d\}_{d\in D}}$, we see this that is nothing more than a rephrasing of the definition of convergence of $x$ to $x_0$.
+\end{proof}
+Thus we have reduced convergence of a net to a statement about inclusion between two classes of subsets of topological spaces. This is, of course, a specific case of a more general phenomenon. The trick here is to note that the classes of subsets involved are so-called \textit{filters}, and then Proposition \ref{netfilterconvergence} suggests a notion of convergence for such classes. To do this in adequate generality, we introduce a subclass of posets, called \textit{meet semilattices}, which are exactly those posets inside of which the definition of a \textit{filter} can be stated.
+
+\begin{definition}
+Let $L$ be a poset. Then $L$ is said to be a \textit{meet semilattice} if $L$ has an upper bound $\top$ and every pair $x,y\in P$ has a greatest lower bound. That is, there exists an element, called the \textit{meet} of $x$ and $y$ and denoted $x\wedge y$ of $P$ such that, whenever $z\in P$ and $x\leq z$ and $y\leq z$, then $x\wedge y\leq z$.
+\end{definition}
+
+\begin{remark}
+The meet of any two elements $x,y$ in a meet semilattice is unique: if $z,z'$ are joins for $x$ and $y$, then it follow that $z'\leq z$ and $z\leq z'$, hence by antisymmetry, $z=z'$.
+\end{remark}
+
+If $(X,T)$ is a topological space, the posets $T$ and $\mathcal P(X)$ are meet semilattices: the meet, in both cases, is provided by the intersection. These are the two main examples of use in this section. For the full generality required, it will be convenient to speak of semilattices sitting between a topology and the corresponding powerset, so define a \textit{topological meet semilattice on a space $(X, T)$} to be a meet semilattice $T\leq L\leq\mathcal P(X)$ whose meet is given by the intersection of sets.
+
+\begin{definition}
+Let $L$ be a meet semilattice. Then a nonempty subset $F\subset L$ is said to be a \textit{filter} if
+\begin{enumerate}
+    \item $\top\in F$,
+    \item For all $x,y\in F$, $x\wedge y\in F$,
+    \item if $x\in F$ and $y\in L$ with $x\leq y$, then $y\in F$.
+\end{enumerate}
+$F$ is said to be \textit{proper} if $F\neq L$.
+\end{definition}
+
+It is easy to see that $\neigh{x_0}$ and $\filt{\{x_d\}_{d\in D}}$ are both filters in the meet semilattice of open sets on a space.
+
+\begin{definition}
+Let $(X,T)$ be a topological space, $L$ a topological meet semilattice on $X$, $F\subset L$ a filter and $x_0\in X$. Then the filter $F$ is said to \textit{converge to $x_0$} if $\neigh{x_0}\subset F$.
+\end{definition}
+
+So a sequence, or net, generates a filter, and the sequence or net converges if and only if its corresponding filter does, and to the same point. Hence filters completely capture the notions of convergence we have seen. But there is still much more to be said about filter convergence, and in particular the convergence of \textit{ultrafilters}.
+
+\begin{definition}
+Let $L$ be a meet semilattice. Then a filter $F\subset L$ is said to be an \textit{ultrafilter} if, whenever $G\subset L$ is a proper filter containing $F$, then $G=F$.
+\end{definition}
+
+Ultrafilters are particularly well behaved the the meet semilattice $\mathcal P(X)$ of all subsets of a set $X$. They have a nice characterisation;
+
+\begin{proposition}
+Let $X$ be a set and $F\subset\mathcal P(X)$ a proper filter. Then $F$ is an ultrafilter if and only if, for all sets $A\subset X$, either $A\in F$ or $A\setminus X\in F.$
+\end{proposition}
+\begin{proof}
+
+\end{proof}
+
+and one has a steady supply of ultrafilters;
+
+\begin{theorem}\textbf{(Ultrafilter Lemma)}
+\label{ultrafilterlemma}\newline
+Let $X$ be a set and $F\subset\mathcal P(X)$ a proper filter. Then there is an ultrafilter $G\subset\mathcal P(X)$ containing $F$.
+\end{theorem}
+\begin{proof}
+Standard zornification.
+\end{proof}
+
+The vigilant reader will notice the reliance of the Ultrafilter lemma on Zorn's lemma. It is natural then, to ask, can the Ultrafilter lemma be proved without choice? The answer is more interesting than perhaps expected. The Ultrafilter lemma is strictly weaker than choice, being implied by it but not conversely, but it is still independent of ZFC. In fact, the Ultrafilter lemma is one of the most common weakenings of choice, and is equivalent to a number of other results, including Tychonoff's Theorem for Hausdorff spaces.
+
+\begin{definition}
+Let $X$ be a topological space. Then an \textit{ultrafilter on $X$} is an ultrafilter in the topological meet semilattice $\mathcal P(X)$.
+\end{definition}
+
+\chapter{Connectedness}
+
+\begin{definition}
+Let $X$ be a topological space. A \textit{disconnection} of $X$ is a pair $U,V\subset X$ of nonempty disjoint open subsets such that $U\cup V=X$. The space $X$ is said to be \textit{disconnected} if it admits a disconnection, and \textit{connected} otherwise.
+\end{definition}
+
+The idea behind this definition is that if, say $\R^2$ is expressed as a union of open subsets, they must overlap.
+
+\begin{remark}
+If $X$ is a topological space and $U,V\subset X$ a disconnection, then $V=X\setminus U$ is closed and $U=X\setminus V$ is closed. In particular, a disconnection could equally well be taken to be a pair of disjoint \textit{closed} subsets.
+\end{remark}
+
+\begin{definition}
+Let $X$ be a topological space and $C\subset X$. The subset $C$ is said to be connected if the subspace $C$ is a connected topological space.
+\end{definition}
+
+It is also useful to think of connectedness in terms of an equivalence relation.
+
+\begin{definition}
+Let $X$ be a topological space and $x,y\in X$. Then $x$ and $y$ are said to be \textit{connected} if there is a connected subset $C\subset X$ with $x,y\in C$.
+\end{definition}
+
+Before we prove that this is, indeedn an equivalence relation, it is useful to have some characterizations of connectedness. Let $2$ denote the set $\{0,1\}$ with the discrete topology.
+
+\begin{proposition}
+Let $X$ be a topological space. Then the following are equivalent.
+\begin{enumerate}
+    \item The space $X$ is connected,
+    \item For any $x,y\in X$, $x$ and $y$ are connected,
+    \item Every continuous function $f:X\to 2$ is constant,
+    \item The only subsets of $X$ which are both closed and open are $\varnothing$ and $X$.
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+$(1)\Rightarrow(2)$ is trivial. For $(2)\Rightarrow(3)$, let $f:X\to 2$ be continuous and let $x,y\in X$. Let $C\subset X$ be a connected set containing $x$ and $y$. Then $(f|_C)^{-1}(\{0\})$ and $(f|_C)^{-1}(\{1\})$ are disjoint open subsets of $C$ whose union is $C$, hence since $C$ is connected one must be empty, thus $f|_C$ is constant, i.e., $f(x)=f(y)$. Since $x$ and $y$ were arbitrary, $f$ is constant.\par
+$(3)\Rightarrow (4)$. Suppose $U\subset X$ is clopen. The function $f:X\to 2$ defined by
+$$f(x)=\begin{cases}1 &\text{if }x\in U\\ 0&\text{if }x\notin U\end{cases}$$
+is continuous, hence is constant. Thus either $f^{-1}(\{0\})$ is empty, in which case $U=X$ or $f^{-1}(\{1\})$ is empty, in which case $U=\varnothing$.\par
+
+$(4)\Rightarrow(1)$. By contraposition: suppose $X$ admits a disconnection $U,V\subset X$. Then $V=X\setminus U$ is clopen but is neither $\varnothing$ nor $X$.
+\end{proof}
+
+\begin{proposition}
+Let $X$ be a topological space and $A,B\subset X$ two connected subsets with $A\cap B\neq\varnothing$. Then $A\cup B$ is connected.
+\end{proposition}
+\begin{proof}
+Let $f:A\cup B\to 2$ be continuous. Since $A$ and $B$ are connected, $f|_A$ and $f|_B$ are constant. Let $a\in A$, $b\in B$ and $x\in A\cup B$. Then $f(a)=f(x)=f(b)$ hence $f$ is constant.
+\end{proof}
+
+\begin{proposition}
+Let $X$ be a topological space. Then the relation given by connectedness of points is an equivalence relation.
+\end{proposition}
+\begin{proof}
+Trivial.
+\end{proof}
+
+\begin{proposition}
+Let $X$ be a topological space and $C\subset X$ a connected set. If $A\subset X$ satisfies $C\subset A\subset \overline C$ then $A$ is connected.
+\end{proposition}
+\begin{proof}
+Let $f:A\to 2$ be continuous. Then $f|_C$ is continuous hence constant. Let $x\in A\setminus C$. Now $f^{-1}(f(x))$ is an open set containing $x$, hence since $x\in\partial C$, $f^{-1}(f(x))\cap C\neq\varnothing$ is an open set containing $x$. It follows that $f(x)=f(c)$ for some, and hence all, $c\in C$. Thus $f$ is constant.
+\end{proof}
+
+\begin{definition}
+Let $X$ be a topological space and $x\in X$. Then the equivalence class $[x]$ of $x$ under connectedness is called \textit{the connected component of $X$ containing $x$}. 
+\end{definition}
+
+\begin{remark}
+The connected components of a space $X$ form a partition of $X$ and every component is clearly connected, and by the preceding proposition is closed. Moreover, if $x\in X$, $[x]$ is the union of every connected set containing $x$. Components are not, in general, open. For instance, the connected components of $\Q$ are the singletons, which are not open.
+\end{remark}
+
+\begin{definition}
+Let $I\subset\R$. Then $I$ is said to be an \textit{interval} if, for all $x,y\in I$, $[x,y]\subset I$.
+\end{definition}
+
+It is clear that this definition gives the usual notion of intervals.
+
+\begin{theorem}(Classification of Connected Subsets of $\R$)\newline
+Let $C\subset\R$. Then $A$ is connected if and only if $A$ is an interval.
+\end{theorem}
+\begin{proof}
+Suppose that $A$ is not an interval, and let $x,y\in A$ and $z\in\R$ such that $x\leq z\leq y$ and $z\notin A$. Then one has a disconnection
+$$A=(A\cap(-\infty,z))\cup(A\cap(z,\infty))$$
+hence $A$ is disconnected.
+
+Suppose now that $A$ is disconnected, i.e., that $A$ admits a disconnection $U\cap A,V\cap A\subset A$ where $U,V\subset\R$ are open. Without loss of generality, assume that one has elements $a\in U$ and $b\in V$ such that $a<b$. Then the set
+$$B:=(-\infty,b)\cap A\cap U$$
+is nonempty and bounded above, hence has a supremum $\alpha$. Since every open neighbourhood of $\alpha$ in $A$ intersects $B$ it follows that $\alpha$ lies int he closure of $B$ in $A$. Since $V\cap A$ is open and disjoint to $B$ is also follows that $\alpha\notin V\cap A$.
+\end{proof}
+
+\begin{theorem}
+Let $X$ and $Y$ be a topological spaces and $f:X\to Y$ a continuous function. Then if $C\subset X$ is connected, $f(C)$ is connected. 
+\end{theorem}
+\begin{remark}
+The colloquial phrasing for this result is ``the continuous image of a connected set is conencted'' or ``continuous functions send connected sets to connected sets''.
+\end{remark}
+\begin{proof}
+We proceed by contraposition. Let $C\subset X$ be connected and suppose one has a disconnection $U,V\subset f(C)$. Then $f|_C^{-1}(U)$ and $f|_C^{-1}(V)$ are open, disjoint and cover $C$. Hence $C$ is disconnected.
+\end{proof}
+
+Now the reader may ask themselves: does the converse hold? And moreover - if the intuitive idea \textit{behind continuity} is that a continuous function cannot create ``new holes'' in its image, why is the definition of continuity ``the inverse image of open sets in the codomain is open in the domain'' rather than ``the image of connected sets are connected''? The answer is that, no, the converse does not hold, and an example illustrates that functions sending connected sets to connected sets do not have the properties desired from continuous functions.
+
+\begin{example}
+Let $f:\R\to\R$ be the function defined by
+$$f(x)=\begin{cases}\sin\left(\tfrac{1}{x}\right) & \text{if }x\neq 0\\0 & \text{if }x=0\end{cases}$$
+now $f|_{\R\setminus\{0\}}$ is continuous, hence sends connected sets to connected sets. If $C\subset\R$ is connected and contains 0, it contains either $[0,\varepsilon)$ or $(\varepsilon,0]$ for some $\varepsilon>0$. Assume the former; it makes no difference in the argument. Then
+$$f(C)=f|_{\R\setminus\{0\}}(C\setminus\{0\})\cup f([0,\varepsilon))$$
+now $f([0,\varepsilon))=[-1,1]$ and $f(C)=f|_{\R\setminus\{0\}}(C\setminus\{0\})$ is connected and intersects $[-1,1]$, hence $f(C)$ is connected. So $f$ sends connected sets to connected sets, however it has no limit at 0. Hence and in particular it violates the $\varepsilon$-$\delta$ definition of continuity. Clearly, it would be morally abhorrent to consider $f$ continuous. Thus, we are forced to conclude that the stronger condition ``the inverse image of open sets is open'' is the correct definition of continuity.
+\end{example}
+
+\chapter{Open Covers And Compactness}
+Topology is the act of looking closely at spaces. It provides a robust notion of ``local''-ness; a space has a property locally if, for each of its points, there is a neighbourhood or neighbourhood base for that point with the desired property. This technique of looking locally at spaces is only half useful if there is no way of going back. If a space is to be decomposed into a family of open sets, it can be reconstructed by putting these open sets back together, by means of an \textit{open cover}.
+
+\section{Open Covers}
+\begin{definition}
+Let $(X,T)$ be a topological space and $C\subset T$ a collection of open sets of $X$. Then $C$ is said to be an \textit{open cover for $X$} if
+    $$\bigcup_{U\in C} U=X.$$
+An open cover $C\subset T$ is said to be \textit{trivial} if $X\in C$ and \textit{degenerate} if $\varnothing\in C$.
+\end{definition}
+
+One can also consider open covers of subsets of topological spaces. If $S\subset X$ is a subset of a topological space $X$, then $C\subset T$ is said to be an open cover for $S$ if $S\subset\bigcup U$. In this case, the set $\{U\cap S:U\in C\}$ is an open cover of the topological space $(S, T|_S)$ in the earlier sense, and moreover every open cover of $(S,T|_S)$ arises in this way, by the definition of the subspace topology.
+
+We have met open covers before. The first nontrivial such examples are bases and subbases. Another example is a disconnection; a disconnection is precisely a nondegenerate open cover consisting of two disjoint open sets. Connectedness can thus be stated in terms of open covers in the following two ways.
+
+\begin{proposition}
+Let $(X,T)$ be a topological space. Then $X$ is connected if and only if, for every nontrivial open cover $\{U,V\}\subset T$ by two open sets, $U\cap V\neq\varnothing$.
+\end{proposition}
+
+\begin{proposition}
+Let $(X,T)$ be a topological space. Then $X$ is connected if, and only if, for each nondegenerate nontrivial open cover $C\subset T$ and each $U\in C$, there exists $V\in C\setminus\{U\}$ such that $U\cap V\neq\varnothing$.
+\end{proposition}
+\begin{proof}
+Suppose that $X$ is not connected. Then a disconnection $\{U,V\}$ is an open cover and $U\cap V=\varnothing$. Suppose that $C\subset T$ is an open cover and $U\in C$ is such that $U\cap V=\varnothing$ for all $V\in C$. Then $\{U,\bigcup (C\setminus\{U\})\}$ is a disconnection of $X$.
+\end{proof}
+
+These results can be interpreted as the fact that, whenever some open sets are covering some connected component of some space, there is necessarily some redundancy introduced; some point is contained in two distinct sets in the open cover. Oftentimes, whole open sets can be removed from a cover without affecting its status as a cover. Now topological spaces don't come with an inbuilt notion of size. There is no uniform or natural way to define distances between points, or sizes for sets. But we can say some things about the size of a topological space, and the redundancies introduced by open covers provide one means of doing so.
+
+\section{Compactness}
+\begin{definition}
+Let $(X,T)$ be a topological space and $C\subset T$ an open cover. Then a \textit{subcover of $C$} is a subset $D\subset C$ which is an open cover of $X$.
+\end{definition}
+
+Intuitively, if an open cover has subcovers substantially smaller than it, then it has a lot of redundancy. If a space has the property that open covers must contain small subcovers, then the open sets must constitute significant portions of the space, since too many of them necessarily introduces significant redundancy. Since open sets are to be thought of as being allowed to be arbitrarily small, a space where open covers must have small subcovers must itself be small. This is the most important notion of size for topological spaces.
+
+\begin{definition}
+Let $X$ be a topological space. Then $X$ is said to be \textit{compact} if every open cover of $X$ contains a subcover consisting of finitely many open sets.
+\end{definition}
+
+We can also speak of compactness of subsets of topological spaces;
+
+\begin{definition}
+Let $X$ be a topological space and $K\subset X$. Then $K$ is said to be \textit{compact (in, or relative to $X$)} if every cover of $K$ by open sets in $X$ has a finite subcover.
+\end{definition}
+
+Luckily, the subspace topology is such that these two notions coincide.
+
+\begin{proposition}
+\label{compactnessnotrelative}
+Let $(X, T)$ be a topological space and $K\subset X$. Then $K$ is a compact subset of $X$ if and only if the topological space $(K, T|_K)$ is compact.
+\end{proposition}
+\begin{proof}
+Suppose that $K$ is compact in $X$, and let $\{U_\alpha:\alpha\in A\}\subset T$ be an open cover of $K$. Then the set $\{U_\alpha\cap K:\alpha\in A\}$ is an open cover of $(K, T|_K)$, hence there exists a finite set $F\subset A$ such that $\{U_\alpha\cap K:\alpha\in F\}$ is an open cover of $K$. But
+$$K=\bigcup_{\alpha\in F}(U_\alpha\cap K)\subset\bigcup_{\alpha\in F}U_\alpha$$
+so that $\{U_\alpha:\alpha\in F\}$ is a finite subcover of $\{U_\alpha:\alpha\in A\}$.
+
+Suppose that $(K, T|_K)$ is compact, and let $\{U_\alpha:\alpha\in A\}\subset T$ be an cover of $K$ by open sets of $X$. Then the set $\{U_\alpha\cap K:\alpha\in A\}$ is an open cover of $K$, hence there exists a finite set $F\subset A$ such that $\{U_\alpha\cap K:\alpha\in F\}$ is an open cover of $K$. Hence
+$$K=\bigcup_{\alpha\in F} (U_\alpha\cap K)\subset\bigcup_{\alpha\in F}U_\alpha$$
+thus $\{U_\alpha:\alpha\in F\}$ is a finite subcover of $\{U_\alpha:\alpha\in A\}$.
+\end{proof}
+
+Compactness can be thought of as a generalisation of finiteness. An example of this is the following.
+\begin{proposition}
+Let $X$ be a discrete space. Then a subset $A\subset X$ is compact if and only if it is finite.
+\end{proposition}
+
+Seemingly exotic in the full generality of topological spaces, compactness admits simple characterisations in some familiar spaces.
+
+\begin{theorem}
+\label{compactRn}
+Let $n\in\N$ and $K\subset\R^n$. Then the following are equivalent.
+\begin{enumerate}
+    \item $K$ is compact,
+    \item Every sequence in $K$ has a subsequence which converges to a point of $K$,
+    \item Every infinite subset of $K$ has a limit point in $K$, and
+    \item $K$ is closed and bounded.
+\end{enumerate}
+\end{theorem}
+
+The equivalence between compactness and closed-and-boundedness in $\R^n$ is known as the Heine-Borel Theorem. This theorem gives us many examples of compact and noncompact spaces.
+
+\begin{example}~
+\begin{enumerate}
+    \item The real line $\R$ is not compact, since it is not bounded.
+    \item The interval $[0,1]$ is compact.
+    \item The circle $\mathbb S^1=\{x\in\C:|x|=1\}$ is compact, and so is $\T^n$ and $\mathbb S^n$ for all $n\in\N$.
+\end{enumerate}
+\end{example}
+
+Interestingly, the space $[0,1]$ is compact but its dense subspace $(0,1)$ is not! This seems contrary to the intuition that compact spaces are ``small''. Certainly $(0,1)$, as a metric space, is small; it has finite diameter. However considered only as a topological space, it is not. In fact, the function $x\mapsto \arctan(\pi x)$ is a homeomorphism between $(0,1)$ and $\R$: it has a continuous inverse $\arctan$. The difference here is, of course, the inclusion or noninclusion of endpoints - it is the ``caps'' on the ends of $[0,1]$ that contain it and limit its topological size. In terms of open covers, what is going on here is that, in order to cover $[0,1]$, you need to cover the endpoints as well - but an open set containing, say, 1, must include a neighbourhood of 1, and hence and open sets neat 1. But near the endpoints are the only place where infinitely many nonredundant open sets can be squeezed in, so the inclusion of the endpoint prevents this. That spaces can be compact by \textit{adding more points} - known as \textit{compactification} - is of unprecedented importance in modern mathematics.
+
+The Heine-Borel Theorem has a generalisation for metric spaces.
+
+\begin{theorem}
+\label{compactmetric}
+Let $(X,d)$ be a metric space and $K\subset X$. Then $K$ is compact if and only if $K$ is \textit{totally bounded} and \textit{complete}.
+\end{theorem}
+\begin{remark}
+A subset $C\subset X$ of a metric space is said to be \textit{totally bounded} if, for all $\varepsilon>0$, there is a finite set $F\subset X$ such that $\{B_{\varepsilon}(x):x\in F\}$ is an open cover for $C$, and $C$ is said to be \textit{complete} if it is complete as a metric space.
+\end{remark}
+
+\subsection{Basic Properties of Compactness}
+\begin{proposition}
+\label{continuousimagecompact}
+Let $X$ and $Y$ be topological spaces, $f:X\to Y$ a continuous function and suppose that $X$ is compact. Then the image $f(X)$ of $X$ under $f$ is compact.
+\end{proposition}
+\begin{proof}
+Let $\{U_\alpha:\alpha\in A\}$ be an open cover of $f(X)$. Then, since $f$ is compact, for each $\alpha\in A$, the set $f^{-1}(U_\alpha)$ is open in $X$, hence $\{f^{-1}(U_\alpha):\alpha\in A\}$ is an open cover of $X$. Since $X$ is compact, there is a finite set $F\subset A$ such that $\{f^{-1}(U_\alpha):\alpha\in F\}$ covers $X$, hence $\{U_\alpha:\alpha\in F\}$ covers $f(X)$.
+\end{proof}
+This result gives another way in which compactness can be thought of as a generalisation of finiteness; compact spaces share some qualities of finite sets, illustrated by the following corollaries.
+\begin{corollary}
+Let $X$ be a compact space and $f:X\to\R$ a continuous function. Then the supremum $\sup f(X)$ is actually a maximum, i.e., there exists $x\in X$ such that $f(x)=\sup f(X)=\max f(X)$.
+\end{corollary}
+\begin{proof}
+Proposition \ref{continuousimagecompact} + Heine-Borel.
+\end{proof}
+\begin{corollary}
+Let $a\leq b\in\R$ and $f:[a,b]\to\R$ be a continuous function. Then $f$ achieves its maximum.
+\end{corollary}
+
+\begin{proposition}
+Let $X$ be a compact space and $C\subset X$ a closed set. Then $C$ is compact.
+\end{proposition}
+\begin{proof}
+Let $\{U_\alpha:\alpha\in A\}$ be an open cover of $C$. Then the set $\{U_\alpha:\alpha\in A\}\cup\{X\setminus C\}$ is an open cover of $X$, hence there is a finite subcover $\{U_\alpha:\alpha\in F\}\cup\{X\setminus C\}$. Thus $\{U_\alpha:\alpha\in F\}$ is a finite cover of $C$.
+\end{proof}
+
+\begin{proposition}
+Let $X$ be a Hausdorff space and $K\subset X$ a compact set. Then $K$ is closed.
+\end{proposition}
+\begin{proof}
+Let $x_0\in X\setminus K$. For each $x\in K$ there are disjoint open neighbourhoods $U_x$ and $V_x$ of $x$ and $x_0$, respectively. The sets $\{U_x:x\in K\}$ cover $K$, hence there is a finite subset $F\subset K$ such that $\{U_x:x\in F\}$ covers $K$. But then $\cap_{x\in F} V_x$ is open and disjoint to each $U_x$ for $x\in F$, and hence $K$. Thus $x_0$ has a neighbourhood which does not intersect $K$. That is, $x_0$ is exterior to $K$. Thus $K$ includes its boundary.
+\end{proof}
+
+\begin{proposition}
+\label{nestedintersectioncompact}
+Let $X$ be a topological space and $(K_n)_{n\in\N}$ a sequence of subsets of $X$. If, for all $n\in\N$, $K_n$ is nonempty, closed and compact and $K_{n+1}\subset K_n$, then $\bigcup_{n=1}^\infty K_n\neq\varnothing$.
+\end{proposition}
+\begin{proof}
+Suppose not. For each $n\in\N$, let $U_n:=K_1\setminus K_n$. Then $\{U_n:n\in\N\}$ is an open cover of $K_1$, hence has a finite subcover $\{U_n:n\in F\}$. Since the $K_n$ are nested, $U_{\max F}$ contains all the other $U_n$ for $n\in F$, hence $U_{\max F}=K_1$. But then $K_{\max F}=K_1\setminus U_{\max F}=\varnothing$, a contradiction.
+\end{proof}
+
+\subsection{Types Of Compactness}
+The characterisations of comapctness given in Theorem \ref{compactRn} suggest some notions related to, but in general distinct from, compactness.
+
+\begin{definition}
+Let $X$ be a topological space. Then $X$ is said to be \textit{sequentially compact} if every sequence $(x_n)_{n\in\N}$ has a convergent subsequence.
+\end{definition}
+
+\begin{definition}
+Let $X$ be a topological space. Then $X$ is said to be \textit{countably compact} if every countable open cover has a finite subcover. A subset $K\subset X$ is said to be \textit{compact (in, or relative to $X$)} if every cover of $K$ by countably many open sets of $X$ has a finite subcover.
+\end{definition}
+
+Countable compactness is clearly implied by compactness. The converse fails. Countable compactness shares many properties with compactness. An analogue of Proposition \ref{compactnessnotrelative} follows from an almost identical proof. Also, a closed subset of a countably compact space is countably compact, and Proposition \ref{nestedintersectioncompact} holds with ``compact'' replaced with ``countably compact''.
+
+\begin{proposition}
+Let $X$ be a topological space, $K\subset X$ a countably compact subset and $(x_n)_{n\in\N}$ a sequence in $K$. Then $(x_n)_{n\in\N}$ has a limit point.
+\end{proposition}
+\begin{proof}
+The set $\bigcap_{i=1}^\infty\overline{\{x_n:n\geq i\}}$ of limit points of $(x_n)_{n\in\N}$ is a nested intersection of nonempty closed countably compact sets, hence is nonempty.
+\end{proof}
+
+It follows that every countably compact space is \textit{limit point compact:}
+
+\begin{definition}
+Let $X$ be a topological space. Then $X$ is said to be \textit{limit point compact} if every infinite subset $S\subset X$ has a limit point.
+\end{definition}
+
+\begin{proposition}
+Let $X$ be a countably compact space. Then $X$ is limit point compact.
+\end{proposition}
+\begin{proof}
+Let $S\subset X$ be an infinite set. Then $S$ contains a countable set, which admits an injective enumeration as $(x_n)_{n\in\N}$. Since $X$ is countably compact, $(x_n)_{n\in\N}$ has a limit point $x$. Since $(x_n)_{n\in\N}$ is injective, $x$ is a limit point of $\{x_n:n\in\N\}$ and hence $S$.
+\end{proof}
+\begin{corollary}
+Every compact space is limit point compact.
+\end{corollary}
+
+\section{Tychonoff's Theorem}
+Compactness clearly has a lot to do with convergence. In fact, it has a very convenient characterisation in terms of convergence of ultrafilters, so long as the Ultrafilter lemma is accepted.
+
+\begin{theorem}
+Let $X$ be a topological space. Then $X$ is compact if and only if every ultrafilter on $X$ converges.
+\end{theorem}
+
+This leads to a relatively nice proof of the following famous theorem due to Tychonoff.
+
+\begin{theorem}
+\label{tychonoff}
+\textbf{(Tychonoff's Theorem)}\newline
+Let $\{X_\alpha:\alpha\in A\}$ be a family of compact topological spaces. Then the product $\Pi_{a\in A} X_\alpha$ is compact.
+\end{theorem}
+\begin{lemma}
+\label{projectultrailfter}
+Let $F\subset\mathcal P(\prod_{a\in A} X_\alpha)$ be an ultrafilter. Then, for every $\alpha\in A$, the filter $F_\alpha$ generated by $\{\Pi_\alpha(A):A\in F\}$ is an ultrafilter.
+\end{lemma}
+\begin{proof}
+
+\end{proof}
+\begin{proof} (Of Tychonoff's Theorem)\newline
+Let $F\subset\mathcal P(\Pi_{a\in A} X_\alpha)$ be an ultrafilter. Then the ultrafilters $F_\alpha$ of Lemma \ref{projectultrailfter} are ultrafilters, hence converge to limits $x_\alpha$. We claim that the point $(x_\alpha)$ is a limit for $F$.
+\end{proof}
+
+It is hard to overstate the importance of Tychonoff's theorem. It can be used to prove the \textit{Banach-Alaoglu} theorem of functional analysis, and to see that the topological ring of $\Z_p$ of $p$-adic integers, important in number theory, is compact. Moreover, Tychonoff's theorem guarantees that a certain construction of the Stone-Čech compactification of a topological space is, indeed, compact.
+
+\section{Compactification}
+
+\chapter{Uniform Spaces}
+
+% \chapter{Topology for Algebraic Geometry}
+% In algebraic geometry, one deals with classes of spaces of a decidedly different flavor than the classically ``smooth'' continuum-like spaces encountered in fields such as analysis and differential geometry. Nonetheless, topology is a fundamental tool for this field. In this chapter we will study the consequences of some properties of many of the topological spaces arising in algebraic geometry.
+
+% \section{Irreducible Spaces}
+% \begin{proposition}
+% \label{irreducibleequiv}
+% Let $X$ be a nonempty topological space. Then the following are equivalent
+% \begin{enumerate}
+%     \item Whenever $Y,Z\subset X$ are closed and cover $X$, then $Y=X$ or $Z=X$,
+%     \item Whenever $Y_1,\hdots, Y_n\subset X$ are closed and cover $X$, then $Y_i=X$ for some $1\leq i\leq n$,
+%     \item Whenever $U\subset X$ is open, then $U$ is empty or $U$ is dense.
+%     \item Whenever $U,V\subset X$ are open and nonempty then $U\cap V\neq\varnothing$,
+%     \item Whenever $U,V\subset X$ are open and $U\cap V=\varnothing$, then $U=\varnothing$ or $V=\varnothing$,
+% \end{enumerate}
+% \end{proposition}
+% \begin{proof}
+% $(1)\Leftrightarrow (2)$ easily. Assume $(2)$ and let $U\subset X$ be open. Then $X=\overline U\cup (X\setminus U)$, so either $X\setminus U=X$, in which case $U$ is empty, or $\overline U=X$, in which case $U$ is dense. $(4)$ follows immediately from $(3)$ and $(5)$ is a restatement of $(4)$. Assume $(5)$ and suppose that $Y,Z\subset X$ are closed and cover $X$. Then, by De Morgan,
+% $$(X\setminus Y)\cap (X\setminus Z)=X\setminus (Y\cup Z)=\varnothing$$
+% hence one of $X\setminus Y=\varnothing$ (i.e., $Y=X$) or $X\setminus Z=\varnothing$, so that $(1)$ follows.
+% \end{proof}
+
+% \begin{definition}
+% If $X$ is a nonempty topological space satisfying one (and hence all) of the equivalent conditions of Proposition \ref{irreducibleequiv}, then $X$ is said to be \textit{irreducible.}
+% \end{definition}
+
+% \begin{corollaryp}
+% If $X$ is irreducible and has (at least) two points, then $X$ is not Hausdorff. In particular, there is exactly one irreducible Hausdorff space, up to isomorphism: the single point.
+% \end{corollaryp}
+% \begin{proof}
+% You couldn't possibly separate points by disjoint open neighbourhoods; there are none.
+% \end{proof}
+
+% \begin{proposition}
+% Let $X$ be an irreducible space. Then $X$ is connected.
+% \end{proposition}
+% \begin{proof}
+% If $\varnothing\neq U\subset X$ is clopen then $U=\overline U=X$, hence $X$ has only $\varnothing$ and $X$ as clopen sets.
+% \end{proof}
+
+% \begin{proposition}
+% Let $X$ be an irreducible space and $Z\subset X$ a subspace. If $Z$ is irreducible, then $\overline Z$ is irredicuble.
+% \end{proposition}
+% \begin{proof}
+% Suppose that $Z$ is irreducible. If $\overline Z= Y\cup W$ for some closed sets $Y,W\subset\overline Z$, then $Y\cap Z$ and $W\cap Z$ are closed and cover $Z$, hence, without loss of generality, $Y\cap Z=Z$. Since $\overline Z$ is closed and $Y\subset\overline Z$ is closed in $\overline Z$, $Y$ is closed in $X$, hence one has a closed set $Z\subset Y\subset\overline Z$. Thus $Y=\overline Z$.
+% \end{proof}
+
+% \section{Noetherian Spaces}
+
+\chapter{Convenient Categories of Topological Spaces}
+For many purposes, there are simply too many topological spaces. For instance, the category of topological spaces is not cartesian closed, but contains full subcategories which contain most spaces of interest, which do have such desirable qualities as cartesian closedness. One such example is the category of \textit{compactly generated spaces}. In what follows, all spaces will be Hausdorff, since non-Hausdorff spaces are decidedly inconvenient.
+
+\section{Compactly Generated Spaces}
+Let $X$ be a Hausdorff space. If $K\subset X$ is compact and $C\subset X$ is closed, then $K\cap C$ is closed. The converse, however, is not true. Let $\omega_1$ denote the first uncountable ordinal, and let $X=\omega_1+1$, with its order topology, and set $Y$ to be $X$ with all limit ordinals except $\omega_1$ removed. If $A\subset Y$ is infinite, then it has a limit ordinal $\neq\omega_1$ as a limit point, and hence is not closed. In particular, since $Y$ is Hausdorff, all compact sets are finite. Thus $Y\setminus\omega_1$ meets each compact set is closed, though it is not itself closed, since $\omega_1$ is a limit point.
+
+\begin{definition}
+Let $X$ be a Hausdorff space. Then $X$ is said to be \textit{compactly generated} if, whenever $C\subset X$ and $C\cap K$ is closed for each compact $K\subset X$, then $C$ is closed.
+\end{definition}
+
+The following sufficient condition allows us to quickly identify a bristling supply of compactly generated spaces.
+
+\begin{proposition}
+Let $X$ be a topological space. If, for each subset $M\subset X$ and each limit point $x$ of $M$, there is a compact set $K\subset X$ such that $x$ is a limit point of $M\cap K$, then $X$ is compactly generated.
+\end{proposition}
+\begin{remark}
+This makes sense; if the limiting behavior of a space - which determines the topology - can be recovered from viewing it through compact sets, then it is compactly generated. Note, however, that the converse doesn't hold, in general.
+\end{remark}
+\begin{proof}
+Suppose that $M$ meets each compact set in a closed set, and let $x$ be a limit point of $M$. By assumption there is a compact set $K$ such that $x$ is a limit point of $M\cap K$. Since $M\cap K$ is closed, $x\in M\cap K\subset M$ hence $M$ is closed.
+\end{proof}
+
+\begin{corollary}
+If $X$ is locally compact or first countable, then $X$ is compactly generated.
+\end{corollary}
+\begin{proof}
+Let $M\subset X$ and let $x$ be a limit point of $M$. If $X$ is locally compact, let $K$ be a compact neighbourhood of $x$. Then $x$ is a limit point of $M\cap K$, since if $U$ is a neighbourhood of $x$, then $U\cap K$ is a neighbourhood of $x$ and hence intersects $M$. If $X$ is first countable, let $K$ be the closure of the image of a sequence in $M$ converging to $x$. Then $K$ is compact, since it is a continuous image of $\{0\}\cup\{1/n:n\in\N\}$, and $x$ is a limit point of both $K=M\cap K$.
+\end{proof}
+
+\begin{proposition}
+Let $X$ be a compactly generated space and $A\subset X$. If $A$ is closed, or if $A$ is open and each $x\in A$ has a neighbourhood whose closure lies in $A$, then $A$ is compactly generated.
+\end{proposition}
+\begin{proof}
+Suppose that $A$ is closed, let $B\subset A$, and suppose that $B$ meets every compact set of $A$ in a closed set. Let $K\subset X$ be compact. Then $B\cap K$ is compact, since $K\cap A$ is a closed and hence compact subset of $K$, and $B\cap K=B\cap (A\cap K)\subset K$ is closed (in $A$) and hence compact. It follows that $B$ meets each compact subset of $X$ is a closed set, and since $X$ is compactly generated, $B$ is closed in $X$. Finally, since $A$ is closed, $B$ is closed in $A$, hence $A$ is compactly generated.
+
+Suppose now that $A$ is open and each $x\in A$ has a neighbourhood whose closure lies in $A$. Let $M\subset A$ and suppose that $M\cap K$ is closed in $A$ for each compact $K\subset A$. Let $a\in A$ be a limit point of $M$. Then, by hypothesis, $x$ has a neighbourhood $U$ whose closure lies in $A$. If $K\subset X$ is compact, then $\overline U\cap K$ is a compact subset of $A$. 
+\end{proof}
+\end{document}
